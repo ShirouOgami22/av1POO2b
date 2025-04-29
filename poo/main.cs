@@ -27,8 +27,7 @@ public class Database{
                 using (var command = new SqliteCommand("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'", _db)){
                     using (var reader = command.ExecuteReader()){
                         while (reader.Read()){
-                            string tableName = reader.GetString(0);
-                            availableTables.Add(tableName);
+                            availableTables.Add(reader.GetString(0));
                         }
                     }    
                 }
@@ -51,8 +50,16 @@ public class Database{
                 //}
                 
     }
-    public bool checkTables(string tableName){
-        return availableTables.Any(table=>table==tableName);
+    public bool checkTableCols(string columnName,string table="book"){
+        using (var cmd = new SqliteCommand($"PRAGMA table_info({table});", _db))
+        using (var reader = cmd.ExecuteReader()){
+            while (reader.Read()){
+                string currentColumn = reader.GetString(1);
+                if (currentColumn == columnName)
+                    return true;
+            }
+        }
+        return false;
     }
     public void disconnect(){
         try{
@@ -62,36 +69,31 @@ public class Database{
             }else{print("No database connected");}
         }catch(Exception err){print($"Error disconnecting database:\n-'{err}'-");}
     }
-    public void querry(string mode,string method,string content){//,string table, string arg, string filter){
-        print($"{availableTables.Count}");
-        for(int i=0;i<availableTables.Count;i++){
-            print(availableTables[i]);
+    public void querry(string mode){
+        if(mode=="all"){
+                    using(var cmd = new SqliteCommand($"SELECT * FROM book",_db))
+                        using(var reader = cmd.ExecuteReader()){
+                            int counting=reader.FieldCount;
+                            while(reader.Read()){
+                                if(counting==0){
+                                    print("Book not found");
+                                    break;
+                                }
+                                for(int e = 0; e < counting; e++){
+                                    if(reader.GetName(e)=="title"){print($"{reader.GetValue(e)}");}
+                                }
+                            }
+                        }
+        }else{
+            print("Unknown mode");
         }
-        print($"{checkTables(method)}, {method}");
-        if(checkTables(method)==false){
-            print("Book not found!");
+    }
+    public void querry(string mode,string method,string content){
+        if(checkTableCols(method)==false){
+            print("Unknown Filter");
             return;
         }
-        switch(mode){
-            case "all":
-            for(int i=0;i<availableTables.Count;i++){
-                using(var cmd = new SqliteCommand($"SELECT * FROM book",_db))
-                using(var reader = cmd.ExecuteReader()){
-                    int counting=reader.FieldCount;
-                    while(reader.Read()){
-                        if(counting==0){
-                            print("Book not found");
-                            break;
-                        }
-                        for (int e = 0; e < counting; e++){
-                            print($"{reader.GetName(e)}: {reader.GetValue(e)}");
-                        }
-                    }
-                }    
-            }
-            break;
-            //
-            case "search":
+            if(mode=="search"){
                 using(var cmd = new SqliteCommand($"SELECT * FROM book WHERE {method}=\"{content}\"",_db))
                 using(var reader = cmd.ExecuteReader()){
                     int counting=reader.FieldCount;
@@ -107,16 +109,35 @@ public class Database{
                         print("");
                     }
                 } 
-            break;
-            default:
-                print("Unknown querry mode...");
-            break;
-        }
+            }
         
     }
-    
+    public void querry(string mode,string method,int content){
+        if(checkTableCols(method)==false){
+            print("Unknown Filter");
+            return;
+        }
+            if(mode=="search"){
+                using(var cmd = new SqliteCommand($"SELECT * FROM book WHERE {method}={content}",_db))
+                using(var reader = cmd.ExecuteReader()){
+                    int counting=reader.FieldCount;
+                    while(reader.Read()){
+                        if(counting==0){
+                            print("Book not found\n");
+                            break;
+                        }
+                        print("");
+                        for (int e = 0; e < counting; e++){
+                            print($"{reader.GetName(e)}: {reader.GetValue(e)}");
+                        }
+                        print("");
+                    }
+                } 
+            }
+        
+    }
+   
 }
-
 public static Dictionary<string,object> commands = new Dictionary<string,object>{
     //{"",new {word="",desc="",use=""}}
     {"clear",new {word="clear/cls",desc="Clears the terminal",use="'clear' or 'cls'"}},
@@ -191,7 +212,6 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
                         search();
                     break;
                     case "select":
-                        //querry database bruh
                         
                     break;
                     default:
@@ -203,17 +223,18 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
     }
     static void search(string a="default", string b="default"){
         current = "searching";
-        bool searching=true;
-        if(a=="default"||b=="default"){
+        if(a=="all"){
+            db.querry("all");
+        }else if(a=="default"||b=="default"){
+            bool searching=true;
             print("Type 'q' or 'quit' to cancel search");
-            print("Criteria to search:");
             print(man("search","use"));
             while(searching){
-                string[]? txt=input("search> ");
-                if(txt[0]=="q"||txt[0]=="quit"){
+                string[]? txt=input($"{current}> ");
+                if(txt![0]=="q"||txt[0]=="quit"){
                     print("Exited searching");
                     return;
-                }else if(txt?.Length<2 || txt[0]==null){
+                }else if(txt?.Length<2 || txt![0]==null){
                     print("Invalid amount of arguments");
                 }else{
                     a=txt![0];
@@ -278,7 +299,7 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
                 break;
                 //
                 case "all":
-                    db.querry("all",null,null);
+                    db.querry("all");
                 break;
                 //
                 case "borrow":
