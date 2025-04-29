@@ -5,10 +5,9 @@ using Microsoft.Data.Sqlite;
 class Program{
 public static string current = "library";
 public static bool running=true;
-
+public static List<string> availableTables = new List<string>();
 public class Database{
     private SqliteConnection _db;
-    List<string> availableTables{get; set;}=new List<string>();
     public Database(string path="library.db"){
         if(File.Exists(path)){
             print($"Loading database: {path}");
@@ -29,25 +28,28 @@ public class Database{
                     using (var reader = command.ExecuteReader()){
                         while (reader.Read()){
                             string tableName = reader.GetString(0);
-                            availableTables.Append(tableName);
+                            availableTables.Add(tableName);
                         }
                     }    
                 }
                 List<Tuple<int,string,string>> books= new List<Tuple<int,string,string>>();
-                using (var command = new SqliteCommand("SELECT * FROM book WHERE pubYear>2000", _db)){
+                using (var command = new SqliteCommand("SELECT * FROM book", _db)){
                     using (var reader = command.ExecuteReader()){
                         while (reader.Read()){
                             books.Add(new Tuple<int,string,string>(
                                 Convert.ToInt32(reader.GetString(0)),
                                 reader.GetString(1),
                                 reader.GetString(2)));
-                            //print($"Found book: {reader.GetString(1)}");
-                            for(int i=0;i<books.Count;i++){
-                                print(books[i].Item2);
-                            }
                         }
                     }    
                 }
+                //for(int i=0;i<books.Count;i++){
+                //    print($"{books[i].Item1}, {books[i].Item2}, {books[i].Item3}");
+                //}
+                //for(int i=0;i<availableTables.Count;i++){
+                //    print($"{availableTables[i]}");
+                //}
+                
     }
     public bool checkTables(string tableName){
         return availableTables.Any(table=>table==tableName);
@@ -61,13 +63,26 @@ public class Database{
         }catch(Exception err){print($"Error disconnecting database:\n-'{err}'-");}
     }
     public void querry(string mode,string method,string content){//,string table, string arg, string filter){
+        print($"{availableTables.Count}");
+        for(int i=0;i<availableTables.Count;i++){
+            print(availableTables[i]);
+        }
+        print($"{checkTables(method)}, {method}");
+        if(checkTables(method)==false){
+            print("Book not found!");
+            return;
+        }
         switch(mode){
             case "all":
             for(int i=0;i<availableTables.Count;i++){
-                using(var cmd = new SqliteCommand($"SELECT * FROM {availableTables[i]}",_db))
+                using(var cmd = new SqliteCommand($"SELECT * FROM book",_db))
                 using(var reader = cmd.ExecuteReader()){
                     int counting=reader.FieldCount;
-                    while(reader.Read()){                                       //tidy this shit up, i fucking swear imma kill myself
+                    while(reader.Read()){
+                        if(counting==0){
+                            print("Book not found");
+                            break;
+                        }
                         for (int e = 0; e < counting; e++){
                             print($"{reader.GetName(e)}: {reader.GetValue(e)}");
                         }
@@ -85,9 +100,11 @@ public class Database{
                             print("Book not found\n");
                             break;
                         }
+                        print("");
                         for (int e = 0; e < counting; e++){
-                            print($"{reader.GetName(e)}: {reader.GetValue(e)}\n");
+                            print($"{reader.GetName(e)}: {reader.GetValue(e)}");
                         }
+                        print("");
                     }
                 } 
             break;
@@ -105,7 +122,7 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
     {"clear",new {word="clear/cls",desc="Clears the terminal",use="'clear' or 'cls'"}},
     {"help",new {word="help/h",desc="Shows the command help or the use of a command",use="'help' <command> or 'h' <command>"}},
     {"quit",new {word="quit/q",desc="Terminates the program",use="'quit' or 'q'"}},
-    {"search",new {word="search",desc="Searches for a book through characteristics:\n'Author', 'Title', 'Year' or 'Code'",use="search <method> <content>\nMethods: 'Author', 'Title', 'Year', 'Code'"}},
+    {"search",new {word="search",desc="Searches for a specified book",use="search <method> <content>\nMethods: 'author', 'title', 'pubYear' or 'id'"}},
 };
 
     public static string man(string com, string inf){
@@ -185,10 +202,10 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
         }
     }
     static void search(string a="default", string b="default"){
-        print("Type 'q' or 'quit' to cancel search");
         current = "searching";
         bool searching=true;
         if(a=="default"||b=="default"){
+            print("Type 'q' or 'quit' to cancel search");
             print("Criteria to search:");
             print(man("search","use"));
             while(searching){
@@ -205,7 +222,6 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
                 }
             }
         }
-        print($"searching for the book by {a}: \"{b}\"");
         db.querry("search",$"{a}",$"{b}");
     }
     public static void checkLibrary(){
@@ -254,7 +270,11 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
                 break;
                 //
                 case "search":
-                    search();
+                    if(a.Length>3 || a.Length<=2){
+                        search();
+                    }else{
+                        search(a[1],a[2]);
+                    }
                 break;
                 //
                 case "all":
