@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+make gui
+tweak the code
+add more functionality to the database query stuff
+idk... keep going?
+integrate with actual local database, using xampp
+edit that thing teacher asked, my name...
+*/
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
