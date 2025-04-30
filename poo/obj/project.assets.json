@@ -2332,19 +2332,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\thony\\.nuget\\packages\\": {}
+    "C:\\Users\\anthony_guerra\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\thony\\Downloads\\av1POO2b\\poo\\poo.csproj",
+      "projectUniqueName": "C:\\Users\\anthony_guerra\\Documents\\av1POO2b\\poo\\poo.csproj",
       "projectName": "poo",
-      "projectPath": "C:\\Users\\thony\\Downloads\\av1POO2b\\poo\\poo.csproj",
-      "packagesPath": "C:\\Users\\thony\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\thony\\Downloads\\av1POO2b\\poo\\obj\\",
+      "projectPath": "C:\\Users\\anthony_guerra\\Documents\\av1POO2b\\poo\\poo.csproj",
+      "packagesPath": "C:\\Users\\anthony_guerra\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\anthony_guerra\\Documents\\av1POO2b\\poo\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\thony\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\anthony_guerra\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"

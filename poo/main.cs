@@ -291,15 +291,14 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
                 break;
                 //
                 case "search":
-                    if(a.Length>3 || a.Length<=2){
+                    if(a.Length>3 || a.Length<2){
+                        print("Invalid amount of arguments");
                         search();
+                    }else if(a.Length==2 && a[1]=="all"){
+                        db.querry("all");
                     }else{
                         search(a[1],a[2]);
                     }
-                break;
-                //
-                case "all":
-                    db.querry("all");
                 break;
                 //
                 case "borrow":
