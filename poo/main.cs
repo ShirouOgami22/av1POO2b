@@ -1,15 +1,21 @@
 ﻿/*
-make gui
-tweak the code
-add more functionality to the database query stuff
-idk... keep going?
-integrate with actual local database, using xampp
-edit that thing teacher asked, my name...
+switch from local database to xampp localhost's
+connect the code to the frontend with that [apicontroller] thingy...
 */
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
+using Microsoft.AspNetCore.Mvc;
+
+
+namespace LibraryApi.Controllers{
+    [ApiController]
+    [Route("library/data")]
+    public class LibraryController : ControllerBase{
+        
+    }    //
+}
 class Program{
 public static string current = "library";
 public static bool running=true;
