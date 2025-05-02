@@ -6,28 +6,29 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
+using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace LibraryApi.Controllers{
     [ApiController]
-    [Route("library/data")]
+    [Route("library/query")]
     public class LibraryController : ControllerBase{
         
-    }    //
+    }
 }
 class Program{
 public static string current = "library";
 public static bool running=true;
 public static List<string> availableTables = new List<string>();
 public class Database{
-    private SqliteConnection _db;
-    public Database(string path="library.db"){
-        if(File.Exists(path)){
-            print($"Loading database: {path}");
-            _db = new SqliteConnection($"Data Source={path}");
-        }else{
-            print("No database found");
+    private MySqlConnection _db;
+    public Database(){
+        try{
+            _db = new MySqlConnection("server=localhost;user=root;password=;database=library");
+
+        }catch(Exception err){
+            print($"No database found?\n{err}");
             Environment.Exit(1);
         }
     }
@@ -38,39 +39,41 @@ public class Database{
                 print("Connected to the database!");
             }else{print("Database already connected");}
         }catch(Exception err){print($"Error connecting to database:\n-'{err}'-");}
-                using (var command = new SqliteCommand("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'", _db)){
+                using (var command = new MySqlCommand("select * from book", _db)){
                     using (var reader = command.ExecuteReader()){
                         while (reader.Read()){
-                            availableTables.Add(reader.GetString(0));
+                            availableTables.Add(reader.GetValue(0).ToString()!);
                         }
                     }    
                 }
                 List<Tuple<int,string,string>> books= new List<Tuple<int,string,string>>();
-                using (var command = new SqliteCommand("SELECT * FROM book", _db)){
+                using (var command = new MySqlCommand("select * from book", _db)){
                     using (var reader = command.ExecuteReader()){
                         while (reader.Read()){
                             books.Add(new Tuple<int,string,string>(
-                                Convert.ToInt32(reader.GetString(0)),
-                                reader.GetString(1),
-                                reader.GetString(2)));
+                                Convert.ToInt32(reader.GetValue(0)),
+                                reader.GetValue(1).ToString()!,
+                                reader.GetValue(2).ToString()!));
                         }
                     }    
                 }
-                //for(int i=0;i<books.Count;i++){
-                //    print($"{books[i].Item1}, {books[i].Item2}, {books[i].Item3}");
-                //}
+                for(int i=0;i<books.Count;i++){
+                    print($"{books[i].Item1}, {books[i].Item2}, {books[i].Item3}");
+                }
                 //for(int i=0;i<availableTables.Count;i++){
                 //    print($"{availableTables[i]}");
                 //}
                 
     }
     public bool checkTableCols(string columnName,string table="book"){
-        using (var cmd = new SqliteCommand($"PRAGMA table_info({table});", _db))
-        using (var reader = cmd.ExecuteReader()){
+        using (var command = new MySqlCommand($"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}' AND COLUMN_NAME = '{columnName}'", _db))
+        using (var reader = command.ExecuteReader()){
             while (reader.Read()){
-                string currentColumn = reader.GetString(1);
+                for(int i=0;i<reader.FieldCount;i++){
+                string currentColumn = reader.GetValue(i).ToString()!;
                 if (currentColumn == columnName)
                     return true;
+                }
             }
         }
         return false;
@@ -85,12 +88,12 @@ public class Database{
     }
     public void querry(string mode){
         if(mode=="all"){
-                    using(var cmd = new SqliteCommand($"SELECT * FROM book",_db))
+                    using(var cmd = new MySqlCommand($"select * from book",_db))
                         using(var reader = cmd.ExecuteReader()){
                             int counting=reader.FieldCount;
                             while(reader.Read()){
                                 if(counting==0){
-                                    print("Book not found");
+                                    print("No books found");
                                     break;
                                 }
                                 for(int e = 0; e < counting; e++){
@@ -108,7 +111,7 @@ public class Database{
             return;
         }
             if(mode=="search"){
-                using(var cmd = new SqliteCommand($"SELECT * FROM book WHERE {method}=\"{content}\"",_db))
+                using(var cmd = new MySqlCommand($"select * from book where {method}=\"{content}\"",_db))
                 using(var reader = cmd.ExecuteReader()){
                     int counting=reader.FieldCount;
                     while(reader.Read()){
@@ -132,7 +135,7 @@ public class Database{
             return;
         }
             if(mode=="search"){
-                using(var cmd = new SqliteCommand($"SELECT * FROM book WHERE {method}={content}",_db))
+                using(var cmd = new MySqlCommand($"select * from book where {method}={content}",_db))
                 using(var reader = cmd.ExecuteReader()){
                     int counting=reader.FieldCount;
                     while(reader.Read()){
@@ -158,6 +161,8 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
     {"help",new {word="help/h",desc="Shows the command help or the use of a command",use="'help' <command> or 'h' <command>"}},
     {"quit",new {word="quit/q",desc="Terminates the program",use="'quit' or 'q'"}},
     {"search",new {word="search",desc="Searches for a specified book",use="search <method> <content>\nMethods: 'author', 'title', 'pubYear' or 'id'"}},
+    {"select",new {word="select",desc="Selects a specified book",use="select <book ID>"}},
+    
 };
 
     public static string man(string com, string inf){
@@ -187,7 +192,7 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
 
     }
     
-    public static Database db = new Database("library.db");
+    public static Database db = new Database();
     static void Main(string[] args){
         //Console.Clear();
         if(args.Length==0){
@@ -210,7 +215,10 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
     }
 
     static void select(){
-        print("Select a book by its id");
+        //Console.Clear();
+        print(man("select","use"));
+        print("You may <search> for a book while selecting\nType 'q' to cancel select");
+        print(man("search","use"));
         bool selecting=true;
         while(selecting){
             current="selecting";
@@ -222,11 +230,26 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
                     case "":
                         print("Invalid?");
                     break;
+                    case "q":
+                    return;
                     case "search":
-                        search();
+                        if(a.Length>3 || a.Length<2){
+                            print("Invalid amount of arguments");
+                            search();
+                        }else if(a.Length==2 && a[1]=="all"){
+                            db.querry("all");
+                        }else{
+                            search(a[1],a[2]);
+                        }
                     break;
                     case "select":
-                        
+                        //selects/adds book to a list of selected books
+                    break;
+                    case "remove":
+                        //removes selected books
+                    break;
+                    case "list":
+                        //lists selected books
                     break;
                     default:
                         print($"Unknown Command {a?[0]}");
@@ -283,6 +306,7 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
                     print($"{man("help","word")}\n{man("help","desc")}\n{man("help","use")}\n");
                     print($"{man("quit","word")}\n{man("quit","desc")}\n{man("quit","use")}\n");
                     print($"{man("search","word")}\n{man("search","desc")}\n{man("search","use")}\n");
+                    print($"{man("select","word")}\n{man("select","desc")}\n{man("select","use")}\n");
                 }else if(a.Length==2){
                     if(commands.ContainsKey(a[1].ToLower())){
                         print($"{man(a[1],"word")}\n{man(a[1],"desc")}\n{man(a[1],"use")}\n");
