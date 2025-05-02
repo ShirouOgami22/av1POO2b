@@ -87,46 +87,51 @@ public class Database{
         }catch(Exception err){print($"Error disconnecting database:\n-'{err}'-");}
     }
     public void querry(string mode){
+        string comando;
         if(mode=="all"){
-                    using(var cmd = new MySqlCommand($"select * from book",_db))
-                        using(var reader = cmd.ExecuteReader()){
-                            int counting=reader.FieldCount;
-                            while(reader.Read()){
-                                if(counting==0){
-                                    print("No books found");
-                                    break;
-                                }
-                                for(int e = 0; e < counting; e++){
-                                    if(reader.GetName(e)=="title"){print($"{reader.GetValue(e)}");}
-                                }
-                            }
-                        }
+            comando="select * from book";
+        }else if(mode=="available"){
+            comando="select * from book where available=1";
+        }else if(mode=="unavailable"){
+            comando="select * from book where available=0";
         }else{
             print("Unknown mode");
+            return;
         }
+        using(var cmd = new MySqlCommand(comando,_db))
+            using(var reader = cmd.ExecuteReader()){
+                int counting=reader.FieldCount;
+                while(reader.Read()){
+                    if(counting==0){
+                        print("No books found");
+                        return;
+                    }
+                    for(int e = 0; e < counting; e++){
+                        if(reader.GetName(e)=="title"){print($"{reader.GetValue(e)}");}
+                    }
+                }
+            }
     }
     public void querry(string mode,string method,string content){
         if(checkTableCols(method)==false){
             print("Unknown Filter");
             return;
         }
-            if(mode=="search"){
-                using(var cmd = new MySqlCommand($"select * from book where {method}=\"{content}\"",_db))
-                using(var reader = cmd.ExecuteReader()){
-                    int counting=reader.FieldCount;
-                    while(reader.Read()){
-                        if(counting==0){
-                            print("Book not found\n");
-                            break;
-                        }
-                        print("");
-                        for (int e = 0; e < counting; e++){
-                            print($"{reader.GetName(e)}: {reader.GetValue(e)}");
-                        }
-                        print("");
+        if(mode=="search"){
+            using(var cmd = new MySqlCommand($"select * from book where {method}=\"{content}\"",_db))
+            using(var reader = cmd.ExecuteReader()){
+                int counting=reader.FieldCount;
+                while(reader.Read()){
+                    if(counting==0){
+                        print("Book not found\n");
+                        return;
                     }
-                } 
-            }
+                    for (int e = 0; e < counting; e++){
+                        print($"\n{reader.GetName(e)}: {reader.GetValue(e)}\n");
+                    }
+                }
+            } 
+        }
         
     }
     public void querry(string mode,string method,int content){
@@ -143,11 +148,9 @@ public class Database{
                             print("Book not found\n");
                             break;
                         }
-                        print("");
                         for (int e = 0; e < counting; e++){
-                            print($"{reader.GetName(e)}: {reader.GetValue(e)}");
+                            print($"\n{reader.GetName(e)}: {reader.GetValue(e)}\n");
                         }
-                        print("");
                     }
                 } 
             }
