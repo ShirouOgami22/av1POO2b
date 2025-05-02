@@ -57,12 +57,17 @@ public class Database{
                         }
                     }    
                 }
-                for(int i=0;i<books.Count;i++){
-                    print($"{books[i].Item1}, {books[i].Item2}, {books[i].Item3}");
-                }
-                //for(int i=0;i<availableTables.Count;i++){
-                //    print($"{availableTables[i]}");
-                //}
+
+                //debug:
+                    //list all books:
+                    //for(int i=0;i<books.Count;i++){
+                    //    print($"{books[i].Item1}, {books[i].Item2}, {books[i].Item3}");
+                    //}
+                    
+                    //list all tables:
+                    //for(int i=0;i<availableTables.Count;i++){
+                    //    print($"{availableTables[i]}");
+                    //}
                 
     }
     public bool checkTableCols(string columnName,string table="book"){
@@ -335,15 +340,30 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
                     if(a.Length>3 || a.Length<2){
                         print("Invalid amount of arguments");
                         search();
-                    }else if(a.Length==2 && a[1]=="all"){
-                        db.querry("all");
                     }else{
                         search(a[1],a[2]);
                     }
                 break;
                 //
                 case "borrow":
-                //borrow();
+                    //borrow();
+                break;
+                //
+                case "list":
+                string method=a[1].ToLower();
+                if(a.Length>1 && a.Length<3){
+                    if(method==null || method==""){
+                            print("Invalid argument to list");
+                            break;
+                    }else if(method=="all"||method=="available"||method=="unavailable"){
+                        db.querry(method);
+                    }else{
+                        print("invalid filter");
+                        break;
+                    }
+                }else{
+                    print("Invalid amount of arguments");
+                }
                 break;
                 //
                 case "select":
