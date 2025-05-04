@@ -1,1 +1,1 @@
-poo.exe library nogui
+poo.exe database nogui

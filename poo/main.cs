@@ -5,7 +5,6 @@ connect the code to the frontend with that [apicontroller] thingy...
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Data.Sqlite;
 using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,8 +19,11 @@ namespace LibraryApi.Controllers{
 class Program{
 public static string current = "library";
 public static bool running=true;
+public static string worker="";
+public static string permissions="";
+
 public static List<string> availableTables = new List<string>();
-public class Database{
+    public class Database{
     private MySqlConnection _db;
     public Database(){
         try{
@@ -38,7 +40,7 @@ public class Database{
                 _db.Open();
                 print("Connected to the database!");
             }else{print("Database already connected");}
-        }catch(Exception err){print($"Error connecting to database:\n-'{err}'-");}
+        }catch(Exception){print($"Error connecting to database\nCheck if server is up\nThe program is set to connect to localhost database named 'library'");Environment.Exit(1);}
                 using (var command = new MySqlCommand("select * from book", _db)){
                     using (var reader = command.ExecuteReader()){
                         while (reader.Read()){
@@ -70,8 +72,17 @@ public class Database{
                     //}
                 
     }
+     public void disconnect(){
+        try{
+            if(_db.State!=System.Data.ConnectionState.Closed){
+                _db.Close();
+                print("Disconnected the database!");
+            }else{print("No database connected");}
+        }catch(Exception err){print($"Error disconnecting database:\n-'{err}'-");}
+    }
+
     public bool checkTableCols(string columnName,string table="book"){
-        using (var command = new MySqlCommand($"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}' AND COLUMN_NAME = '{columnName}'", _db))
+        using (var command = new MySqlCommand($"select column_name from information_schema.columns where table_name = '{table}' and column_name = '{columnName}'", _db))
         using (var reader = command.ExecuteReader()){
             while (reader.Read()){
                 for(int i=0;i<reader.FieldCount;i++){
@@ -83,61 +94,56 @@ public class Database{
         }
         return false;
     }
-    public void disconnect(){
-        try{
-            if(_db.State!=System.Data.ConnectionState.Closed){
-                _db.Close();
-                print("Disconnected the database!");
-            }else{print("No database connected");}
-        }catch(Exception err){print($"Error disconnecting database:\n-'{err}'-");}
-    }
-    public void querry(string mode){
-        string comando;
-        if(mode=="all"){
-            comando="select * from book";
-        }else if(mode=="available"){
-            comando="select * from book where available=1";
-        }else if(mode=="unavailable"){
-            comando="select * from book where available=0";
+    public bool logIn(string a){
+        //basic filter against sql injection... not that i need, its a school project lol
+        if(isNull(a)){
+            print("invalid user?");
+            return false;
         }else{
-            print("Unknown mode");
-            return;
-        }
-        using(var cmd = new MySqlCommand(comando,_db))
-            using(var reader = cmd.ExecuteReader()){
-                int counting=reader.FieldCount;
-                while(reader.Read()){
-                    if(counting==0){
-                        print("No books found");
-                        return;
-                    }
-                    for(int e = 0; e < counting; e++){
-                        if(reader.GetName(e)=="title"){print($"{reader.GetValue(e)}");}
-                    }
+            for(int i=0;i<a.Length; i++){
+                if(a[i].Equals('-')){
+                    print("What you trynna do?");
+                    return false;
                 }
             }
-    }
-    public void querry(string mode,string method,string content){
-        if(checkTableCols(method)==false){
-            print("Unknown Filter");
-            return;
         }
-        if(mode=="search"){
-            using(var cmd = new MySqlCommand($"select * from book where {method}=\"{content}\"",_db))
-            using(var reader = cmd.ExecuteReader()){
-                int counting=reader.FieldCount;
-                while(reader.Read()){
-                    if(counting==0){
-                        print("Book not found\n");
-                        return;
+        using(var cmd = new MySqlCommand($"select * from employee where name = '{a}';",_db))
+        using(var reader = cmd.ExecuteReader()){
+            int found=reader.FieldCount;
+            while (reader.Read()){
+                for(int i=0;i<found; i++){
+                    if(reader.GetName(i)=="name"){
+                        worker=reader.GetValue(i).ToString()!;
+                    }if(reader.GetName(i)=="role"){
+                        permissions=reader.GetValue(i).ToString()!;
                     }
-                    for (int e = 0; e < counting; e++){
-                        print($"\n{reader.GetName(e)}: {reader.GetValue(e)}\n");
+                    if((!isNull(worker))&&(!isNull(permissions))){
+                       return true; 
                     }
                 }
-            } 
+                return false;
+            }
         }
-        
+        return false;
+    }
+    public bool paswd(string a,string b){
+        using(var cmd = new MySqlCommand($"select pasword from employee where name = '{a}';",_db))
+        using(var reader = cmd.ExecuteReader()){
+            while(reader.Read()){
+                string pass=reader.GetValue(0).ToString()!.ToLower();
+                if(isNull(b)){
+                    print("Type your password");
+                    return false;
+                }
+                if(b==pass){
+                    return true;
+                }else{
+                    print("Incorrect password");
+                    return false;
+                }
+            }
+        }
+        return false;
     }
     public void querry(string mode,string method,int content){
         if(checkTableCols(method)==false){
@@ -154,30 +160,78 @@ public class Database{
                             break;
                         }
                         for (int e = 0; e < counting; e++){
-                            print($"\n{reader.GetName(e)}: {reader.GetValue(e)}\n");
+                            print("");print($"{reader.GetName(e)}: {reader.GetValue(e)}");print("");
                         }
                     }
                 } 
             }
         
+    }   
+    public void querry(string mode,string method,string content){
+        if(checkTableCols(method)==false){
+            print("Unknown Filter");
+            return;
+        }
+        if(mode=="search"){
+            using(var cmd = new MySqlCommand($"select * from book where {method}=\"{content}\"",_db))
+            using(var reader = cmd.ExecuteReader()){
+                int counting=reader.FieldCount;
+                while(reader.Read()){
+                    if(counting==0){
+                        print("Book not found\n");
+                        return;
+                    }
+                    for (int e = 0; e < counting; e++){
+                        print("");print($"{reader.GetName(e)}: {reader.GetValue(e)}");print("");
+                    }
+                }
+            } 
+        }
+        
     }
-   
+    public void querry(string mode){
+        string comando;
+        if(mode=="all"){
+            comando="select * from book";
+        }else if(mode=="available"){
+            comando="select * from book where available=1";
+        }else if(mode=="unavailable"){
+            comando="select * from book where available=0";
+        }else{
+            print("Unknown mode");
+            return;
+        }
+        using(var cmd = new MySqlCommand(comando,_db))
+            using(var reader = cmd.ExecuteReader()){
+                int found=reader.FieldCount;
+                while(reader.Read()){
+                    if(found==0){
+                        print("No books found");
+                        return;
+                    }
+                    for(int e = 0; e < found; e++){
+                        if(reader.GetName(e)=="title"){print($"{reader.GetValue(e)}");}
+                    }
+                }
+            }
+    }
 }
-public static Dictionary<string,object> commands = new Dictionary<string,object>{
+
+
+    public static Dictionary<string,object> commands = new Dictionary<string,object>{
     //{"",new {word="",desc="",use=""}}
     {"clear",new {word="clear/cls",desc="Clears the terminal",use="'clear' or 'cls'"}},
-    {"help",new {word="help/h",desc="Shows the command help or the use of a command",use="'help' <command> or 'h' <command>"}},
+    {"help",new {word="help/h",desc="Shows the command list or the use of a command",use="'help' <command> or just 'h'"}},
     {"quit",new {word="quit/q",desc="Terminates the program",use="'quit' or 'q'"}},
     {"search",new {word="search",desc="Searches for a specified book",use="search <method> <content>\nMethods: 'author', 'title', 'pubYear' or 'id'"}},
     {"select",new {word="select",desc="Selects a specified book",use="select <book ID>"}},
-    
+    {"list",new {word="list",desc="Lists books",use="list <options>\nOptions: 'all', 'available','unavailable'"}},
 };
-
     public static string man(string com, string inf){
         if(commands.ContainsKey(com.ToLower())){
                 var command = (dynamic)commands[com];
                 return inf.ToLower() switch{
-                    "word" => command.word,
+                    "word" => $"'{command.word}'",
                     "desc" => command.desc,
                     "use" => command.use,
                     _ => "No such info"
@@ -192,17 +246,16 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
     public static string[]? input(string a){
         Console.Write(a);
         string? txt = Console.ReadLine();;
-        if(txt == null || txt==""){
+        if(isNull(txt!)){
             return Array.Empty<string>();
         }else{
-             return Regex.Matches(txt, @"(?:\"".*?\"")|(?:\S+)").Cast<Match>().Select(m => m.Value.Trim('"')).ToArray();
+             return Regex.Matches(txt!, @"(?:\"".*?\"")|(?:\S+)").Cast<Match>().Select(m => m.Value.Trim('"')).ToArray();
         }
-
     }
-    
     public static Database db = new Database();
     static void Main(string[] args){
         //Console.Clear();
+        db.connect();
         if(args.Length==0){
             print("Please state whether you wish to manage the database with 'database' or start the program with 'library'\nYou may choose wheter to use a graphic user interface: 'noGUI' or 'GUI'");
             print("<program>.exe library nogui");
@@ -210,18 +263,71 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
             if(args[0].ToLower()=="library" && args[1].ToLower()=="nogui"){
                 libraryNogui();
             }else if(args[0].ToLower()=="library" && args[1].ToLower()=="gui"){
-
+                //
             }else if(args[0].ToLower()=="database" && args[1].ToLower()=="nogui"){
-
+                //attempt connection to an account in the database
+                while(true){
+                    string user=string.Join(" ",input("USER: ")!);
+                    if(user.Length==0){
+                        print("Type something");
+                    }else{
+                        if(db.logIn(user)){
+                            break;
+                        }
+                        print($"No user found with the name {user}");
+                    }
+                }
+                while(true){
+                    string password=string.Join(" ",input("PSWD: ")!);
+                    if(!isNull(worker)){
+                        if(db.paswd(worker,password)){
+                            print($"Logged in as {worker}!");
+                            break;
+                        }
+                    }else{
+                        print("user not selected\nTerminating program");
+                        return;
+                    }
+                }
+                if(permissions=="manager"){
+                    databaseNogui();
+                }else{
+                    print($"You, {worker}, dont have direct acess to the database");
+                }
             }else if(args[0].ToLower()=="database" && args[1].ToLower()=="gui"){
-
+                //
             }else{
                 print("Unknown arguments\nexample of correct use:\n<program>.exe library nogui");
             }
 
         }
     }
-
+    public static bool isNull(string a){if(a==null||a==""){return true;}return false;}
+    static void create(string e){
+        current = "creating";
+        string[]? a=input($"{current}> ");
+        if(a?.Length>0){
+            switch(a[0]){
+                case "table":
+                //gather elements for 'table'
+                break;
+                //
+                case "user":
+                //gather elements for 'user'
+                break;
+                //
+                case "book":
+                //gather elements for 'book'
+                break;
+                //
+                default:
+                print($"Unknown Command: '{a[0]}'");
+                break;
+            }
+        }else{
+            print("Type 'h' or 'help'");
+        }
+    }
     static void select(){
         //Console.Clear();
         print(man("select","use"));
@@ -240,6 +346,9 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
                     break;
                     case "q":
                     return;
+                    case "h" or "help":
+                    print("help?");//implement help...
+                    break;
                     case "search":
                         if(a.Length>3 || a.Length<2){
                             print("Invalid amount of arguments");
@@ -251,7 +360,7 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
                         }
                     break;
                     case "select":
-                        //selects/adds book to a list of selected books
+                        //selects/adds book to a list of selected books...
                     break;
                     case "remove":
                         //removes selected books
@@ -272,14 +381,14 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
             db.querry("all");
         }else if(a=="default"||b=="default"){
             bool searching=true;
-            print("Type 'q' or 'quit' to cancel search");
+            print("Type 'q' or 'quit' to cancel\nType 'h' or 'help'");
             print(man("search","use"));
             while(searching){
                 string[]? txt=input($"{current}> ");
                 if(txt![0]=="q"||txt[0]=="quit"){
                     print("Exited searching");
                     return;
-                }else if(txt?.Length<2 || txt![0]==null){
+                }else if(txt?.Length<2 || isNull(txt![0])){
                     print("Invalid amount of arguments");
                 }else{
                     a=txt![0];
@@ -290,90 +399,174 @@ public static Dictionary<string,object> commands = new Dictionary<string,object>
         }
         db.querry("search",$"{a}",$"{b}");
     }
-    public static void checkLibrary(){
-        print("The library currently has:");
-        print($"{"placeholder"} books\n{"placeholder"} categories");
-    }
     static void libraryNogui(){
         //Console.Clear();
-        db.connect();
         print("Type 'help' or 'h'");
         while(running){
             current = "library";
             string[]? a=input($"{current}> ");
-            if(a?.Length>0){
-            switch(a[0]){
-                case "" or null:
-                    print("Please input something");
-                break;
-                //
-                case "h" or "help":
-                if(a.Length==1){
-                    //could improve this tho...
-                    print($"{man("clear","word")}\n{man("clear","desc")}\n{man("clear","use")}\n");
-                    print($"{man("help","word")}\n{man("help","desc")}\n{man("help","use")}\n");
-                    print($"{man("quit","word")}\n{man("quit","desc")}\n{man("quit","use")}\n");
-                    print($"{man("search","word")}\n{man("search","desc")}\n{man("search","use")}\n");
-                    print($"{man("select","word")}\n{man("select","desc")}\n{man("select","use")}\n");
-                }else if(a.Length==2){
-                    if(commands.ContainsKey(a[1].ToLower())){
-                        print($"{man(a[1],"word")}\n{man(a[1],"desc")}\n{man(a[1],"use")}\n");
+            if(a!.Length>0){
+                switch(a[0]){
+                    case "" or null:
+                        print("Please input something");
+                    break;
+                    //
+                    case "h" or "help":
+                    if(a.Length==1){
+                        //could improve this tho...
+                        print($"{man("clear","word")}\n{man("clear","desc")}\n{man("clear","use")}\n");
+                        print($"{man("help","word")}\n{man("help","desc")}\n{man("help","use")}\n");
+                        print($"{man("quit","word")}\n{man("quit","desc")}\n{man("quit","use")}\n");
+                        print($"{man("search","word")}\n{man("search","desc")}\n{man("search","use")}\n");
+                        print($"{man("select","word")}\n{man("select","desc")}\n{man("select","use")}\n");
+                    }else if(a.Length==2){
+                        if(commands.ContainsKey(a[1].ToLower())){
+                            print($"{man(a[1],"word")}\n{man(a[1],"desc")}\n{man(a[1],"use")}\n");
+                        }else{
+                            print("Command doesnt exist");
+                        }
                     }else{
-                        print("Command doesnt exist");
+                        print("Invalid amount of arguments");
                     }
-                }else{
-                    print("Invalid amount of arguments");
-                }
                 //improve...
                 break;
-                //
-                case "q" or "quit":
-                    print("Byye!");
-                    Environment.Exit(0);
-                break;
-                //
-                case "cls" or "clear":
-                    Console.Clear();
-                break;
-                //
-                case "search":
+                    //
+                    case "q" or "quit":
+                        db.disconnect();
+                        print("Byye!");
+                        Environment.Exit(0);
+                    break;
+                    //
+                    case "cls" or "clear":
+                        Console.Clear();
+                    break;
+                    //
+                    case "search":
                     if(a.Length>3 || a.Length<2){
                         print("Invalid amount of arguments");
                         search();
+                    }else if(a.Length==2){
+                        print("Searching by title");
+                        search("title",a[1]);
                     }else{
                         search(a[1],a[2]);
                     }
                 break;
-                //
-                case "borrow":
-                    //borrow();
-                break;
-                //
-                case "list":
-                string method=a[1].ToLower();
-                if(a.Length>1 && a.Length<3){
-                    if(method==null || method==""){
-                            print("Invalid argument to list");
+                    //
+                    case "borrow":
+                        //borrow();
+                    break;
+                    //
+                    case "list":
+                    if(a.Length==2){
+                        if(isNull(a[1])){
+                                print("Invalid argument to list");
+                                break;
+                        }else if(a[1]=="all"||a[1]=="available"||a[1]=="unavailable"){
+                            db.querry(a[1]);
+                        }else{
+                            print("invalid filter");
                             break;
-                    }else if(method=="all"||method=="available"||method=="unavailable"){
-                        db.querry(method);
+                        }
                     }else{
-                        print("invalid filter");
-                        break;
+                        print("Invalid amount of arguments");
                     }
-                }else{
-                    print("Invalid amount of arguments");
+                break;
+                    //
+                    case "select":
+                        select();
+                    break;
+                    //
+                    default:
+                        print($"Unknown Command: '{a[0]}'");
+                    break;
                 }
+            }else{
+                print("Type 'h' or 'help'");
+            }
+        }
+    }
+    static void databaseNogui(){
+        //Console.Clear();
+        print("Type 'help' or 'h'");
+        while(running){
+            current = "database";
+            string[]? a=input($"{current}> ");
+            if(a?.Length>0){
+                switch(a[0]){
+                    case "" or null:
+                    print("Please input something");
                 break;
-                //
-                case "select":
-                    select();
+                    //
+                    case "h" or "help":
+                    if(a.Length==1){
+                        //help menu for database commands...
+                    }else if(a.Length==2){
+                        //thats gonna be a pain in my ass...
+                    }else{
+                        print("Invalid amount of arguments");
+                    }
                 break;
-                //
-                default:
+                    //
+                    case "q" or "quit":
+                    print("Byye!");
+                    db.disconnect();
+                    Environment.Exit(0);
+                break;
+                    //
+                    case "cls" or "clear":
+                    Console.Clear();
+                break;
+                    //
+                    case "query":
+                        string method="";
+                        string content="";
+                        if(a.Length>1&&a.Length<5){
+                            if(!isNull(a[1])){method=a[1];}
+                            if(!isNull(a[2])){content=a[2];}
+                        }else{
+                            print("Incorrect amount of arguments");
+                        }
+                        while(true){
+                            if(isNull(method)){
+                                method=input("mode: ")![0];
+                            }
+                            if(isNull(content)){
+                                content=string.Join(" ",input("content: ")!);
+                            }
+                            if(!isNull(method)&&!isNull(content)){break;}
+                        }
+                        db.querry("search",method,content);
+                    break;
+                    //
+                    case "list":
+                    
+                    break;
+                    //
+                    case "create":
+                        if(a.Length<2||a.Length>3){
+                            print("Invalid amount of arguments");
+                            break;
+                        }
+                        create(a[1]);
+                    break;
+                    //
+                    case "drop":
+
+                break;
+                    //
+                    case "input":
+
+                break;
+                    //
+                    case "update":
+
+                break;
+                    //
+                    default:
                     print($"Unknown Command: '{a[0]}'");
                 break;
-            }
+                }
             }else{
                 print("Type 'h' or 'help'");
             }
