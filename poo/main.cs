@@ -1,4 +1,6 @@
 ﻿/*
+!!!!!  sanitize database related input for ' (single quote), errors and sql injection danger!!
+btw, change all the $"{}" for @ thingyies, related to database stuff so i can avoid sql injectionsssssssssss... not that i need to... its a school project
 switch from local database to xampp localhost's
 connect the code to the frontend with that [apicontroller] thingy...
 */
@@ -7,6 +9,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Mvc;
+using ZstdSharp.Unsafe;
+using Microsoft.AspNetCore.Http.HttpResults;
+using System.Data.OleDb;
 
 
 namespace LibraryApi.Controllers{
@@ -80,14 +85,13 @@ public static List<string> availableTables = new List<string>();
             }else{print("No database connected");}
         }catch(Exception err){print($"Error disconnecting database:\n-'{err}'-");}
     }
-
     public bool checkTableCols(string columnName,string table="book"){
         using (var command = new MySqlCommand($"select column_name from information_schema.columns where table_name = '{table}' and column_name = '{columnName}'", _db))
         using (var reader = command.ExecuteReader()){
             while (reader.Read()){
                 for(int i=0;i<reader.FieldCount;i++){
                 string currentColumn = reader.GetValue(i).ToString()!;
-                if (currentColumn == columnName)
+                if (currentColumn.ToLower() == columnName.ToLower())
                     return true;
                 }
             }
@@ -127,6 +131,7 @@ public static List<string> availableTables = new List<string>();
         return false;
     }
     public bool paswd(string a,string b){
+
         using(var cmd = new MySqlCommand($"select pasword from employee where name = '{a}';",_db))
         using(var reader = cmd.ExecuteReader()){
             while(reader.Read()){
@@ -159,9 +164,11 @@ public static List<string> availableTables = new List<string>();
                             print("Book not found\n");
                             break;
                         }
+                        print("");
                         for (int e = 0; e < counting; e++){
-                            print("");print($"{reader.GetName(e)}: {reader.GetValue(e)}");print("");
+                            print($"{reader.GetName(e)}: {reader.GetValue(e)}");
                         }
+                        print("");
                     }
                 } 
             }
@@ -181,9 +188,11 @@ public static List<string> availableTables = new List<string>();
                         print("Book not found\n");
                         return;
                     }
+                    print("");
                     for (int e = 0; e < counting; e++){
-                        print("");print($"{reader.GetName(e)}: {reader.GetValue(e)}");print("");
+                        print($"{reader.GetName(e)}: {reader.GetValue(e)}");
                     }
+                    print("");
                 }
             } 
         }
@@ -215,8 +224,68 @@ public static List<string> availableTables = new List<string>();
                 }
             }
     }
+    public void create(string what) {
+    current = "creating";
+    using (var cmd = new MySqlCommand($"SELECT table_name FROM information_schema.tables WHERE table_name = '{what}'", _db))
+    using (var reader = cmd.ExecuteReader()){
+        bool ok = false;
+        if (!reader.HasRows){
+            print("Cannot create item for unexisting table");
+            return;
+        }
+        while (reader.Read()){
+            for(int i = 0; i < reader.FieldCount; i++){
+                if(reader.GetValue(i).ToString() == what){
+                    ok = true;
+                    break;
+                }
+            }
+            if (ok) break;
+        }
+        if(!ok){
+            print("Cannot create item for unexisting table");
+            return;
+        }
+    }
+    using (var cmd = new MySqlCommand($"SELECT column_name, extra FROM information_schema.columns WHERE table_name = '{what}' AND table_schema = DATABASE()", _db))
+    using (var reader = cmd.ExecuteReader()) {
+        List<string> cols = new List<string>();
+        while (reader.Read()) {
+            string extra = reader.IsDBNull(1) ? "" : reader.GetString(1);
+            if (extra.ToLower().Contains("auto_increment")){
+                continue;
+            }
+
+            cols.Add(reader.GetString(0));
+        }
+        if (cols.Count == 0){
+            print("Something went wrong");
+            return;
+        }
+
+        for (int i = 0; i < cols.Count; i++){
+            while (true) {
+                object? inp = string.Join(" ",input($"{current}: {what}: {cols.ElementAt(i)}> ")![0]);
+                if (isNull(inp.ToString()!)) {
+                    print("Cannot be empty!");
+                    continue;
+                }
+                print($"{inp.GetType()}");
+                break;
+            }
+        }
+
+        // Still placeholder for actual insert
+        // using(new MySqlCommand($"insert into {what} ",_db)){}
+    }
 }
 
+    //insert into book(title,author,pubYear,category) VALUE ('Vovó Vigarista','David Williams',2013,'Fantasy');
+    //UPDATE `book` SET `available` = '1' WHERE `book`.`id` = 95;
+    //ALTER TABLE `book` CHANGE `available` `available` INT(11) NULL DEFAULT '1';
+    //
+
+}
 
     public static Dictionary<string,object> commands = new Dictionary<string,object>{
     //{"",new {word="",desc="",use=""}}
@@ -303,31 +372,6 @@ public static List<string> availableTables = new List<string>();
         }
     }
     public static bool isNull(string a){if(a==null||a==""){return true;}return false;}
-    static void create(string e){
-        current = "creating";
-        string[]? a=input($"{current}> ");
-        if(a?.Length>0){
-            switch(a[0]){
-                case "table":
-                //gather elements for 'table'
-                break;
-                //
-                case "user":
-                //gather elements for 'user'
-                break;
-                //
-                case "book":
-                //gather elements for 'book'
-                break;
-                //
-                default:
-                print($"Unknown Command: '{a[0]}'");
-                break;
-            }
-        }else{
-            print("Type 'h' or 'help'");
-        }
-    }
     static void select(){
         //Console.Clear();
         print(man("select","use"));
@@ -451,7 +495,7 @@ public static List<string> availableTables = new List<string>();
                     }else{
                         search(a[1],a[2]);
                     }
-                break;
+                    break;
                     //
                     case "borrow":
                         //borrow();
@@ -544,11 +588,11 @@ public static List<string> availableTables = new List<string>();
                     break;
                     //
                     case "create":
-                        if(a.Length<2||a.Length>3){
+                        if(a.Length!=2){
                             print("Invalid amount of arguments");
                             break;
                         }
-                        create(a[1]);
+                        db.create(a[1]);
                     break;
                     //
                     case "drop":
