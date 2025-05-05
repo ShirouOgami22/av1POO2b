@@ -3,6 +3,7 @@
 btw, change all the $"{}" for @ thingyies, related to database stuff so i can avoid sql injectionsssssssssss... not that i need to... its a school project
 switch from local database to xampp localhost's
 connect the code to the frontend with that [apicontroller] thingy...
+get random books
 */
 using System;
 using System.Linq;
@@ -27,7 +28,7 @@ public static bool running=true;
 public static string worker="";
 public static string permissions="";
 
-public static List<string> availableTables = new List<string>();
+    public static List<string> availableTables = new List<string>();
     public class Database{
     private MySqlConnection _db;
     public Database(){
@@ -150,13 +151,24 @@ public static List<string> availableTables = new List<string>();
         }
         return false;
     }
-    public void querry(string mode,string method,int content){
-        if(checkTableCols(method)==false){
-            print("Unknown Filter");
+    public void querry(string mode,string method,int content,string mod="at"){
+        if(checkTableCols(method)==false||mod!="at"||mod!="after"||mod!="before"){
+            print("Unknown Filter or method");
             return;
         }
+        switch(mod){
+            case "before":
+            mod="<";
+            break;
+            case "after":
+            mod=">";
+            break;
+            default:
+            mod="=";
+            break;
+        }
             if(mode=="search"){
-                using(var cmd = new MySqlCommand($"select * from book where {method}={content}",_db))
+                using(var cmd = new MySqlCommand($"select * from book where {method}{mod}{content}",_db))
                 using(var reader = cmd.ExecuteReader()){
                     int counting=reader.FieldCount;
                     while(reader.Read()){
@@ -171,6 +183,9 @@ public static List<string> availableTables = new List<string>();
                         print("");
                     }
                 } 
+            }else{
+                print("Unknown mode");
+                return;
             }
         
     }   
@@ -224,7 +239,7 @@ public static List<string> availableTables = new List<string>();
                 }
             }
     }
-    public void create(string what) {
+    public void create(string what){
     current = "creating";
     using (var cmd = new MySqlCommand($"SELECT table_name FROM information_schema.tables WHERE table_name = '{what}'", _db))
     using (var reader = cmd.ExecuteReader()){
