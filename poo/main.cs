@@ -151,68 +151,37 @@ public static string permissions="";
         }
         return false;
     }
-    public void querry(string mode,string method,int content,string mod="at"){
-        if(checkTableCols(method)==false||mod!="at"||mod!="after"||mod!="before"){
-            print("Unknown Filter or method");
-            return;
-        }
-        switch(mod){
-            case "before":
-            mod="<";
-            break;
-            case "after":
-            mod=">";
-            break;
-            default:
-            mod="=";
-            break;
-        }
-            if(mode=="search"){
-                using(var cmd = new MySqlCommand($"select * from book where {method}{mod}{content}",_db))
-                using(var reader = cmd.ExecuteReader()){
-                    int counting=reader.FieldCount;
-                    while(reader.Read()){
-                        if(counting==0){
-                            print("Book not found\n");
-                            break;
-                        }
-                        print("");
-                        for (int e = 0; e < counting; e++){
-                            print($"{reader.GetName(e)}: {reader.GetValue(e)}");
-                        }
-                        print("");
-                    }
-                } 
-            }else{
-                print("Unknown mode");
+    public void querry(string method,object content){
+        string sqlcomand;
+        //print($"M:{method}, C:{content}"); //debugg...
+        if(content.GetType() == typeof(int)){
+            if(!checkTableCols(method)){
+                print("Unknown method");
                 return;
             }
-        
-    }   
-    public void querry(string mode,string method,string content){
-        if(checkTableCols(method)==false){
-            print("Unknown Filter");
+            sqlcomand=$"select * from book where {method}={content}";
+        }else if(content.GetType() == typeof(string)){
+            sqlcomand=$"select * from book where {method}='{content}'";
+        }else{
+            print("Unknown type of content? nor text or number, is it decimal?");
             return;
         }
-        if(mode=="search"){
-            using(var cmd = new MySqlCommand($"select * from book where {method}=\"{content}\"",_db))
-            using(var reader = cmd.ExecuteReader()){
-                int counting=reader.FieldCount;
-                while(reader.Read()){
-                    if(counting==0){
-                        print("Book not found\n");
-                        return;
-                    }
-                    print("");
-                    for (int e = 0; e < counting; e++){
-                        print($"{reader.GetName(e)}: {reader.GetValue(e)}");
-                    }
-                    print("");
+        using(var cmd = new MySqlCommand(sqlcomand,_db))
+        using(var reader = cmd.ExecuteReader()){
+            int counting=reader.FieldCount;
+            while(reader.Read()){
+                if(counting==0){
+                    print("Book not found\n");
+                    break;
                 }
-            } 
-        }
-        
-    }
+                print("");
+                for (int e = 0; e < counting; e++){
+                    print($"{reader.GetName(e)}: {reader.GetValue(e)}");
+                }
+                print("");
+            }
+        } 
+    }   
     public void querry(string mode){
         string comando;
         if(mode=="all"){
@@ -233,9 +202,11 @@ public static string permissions="";
                         print("No books found");
                         return;
                     }
+                    print("");
                     for(int e = 0; e < found; e++){
-                        if(reader.GetName(e)=="title"){print($"{reader.GetValue(e)}");}
+                        print($"{reader.GetName(e)}: {reader.GetValue(e)}");
                     }
+                    print("");
                 }
             }
     }
@@ -434,37 +405,34 @@ public static string permissions="";
             }
         }
     }
-    static void search(string a="default", string b="default"){
-        current = "searching";
-        if(a=="all"){
-            db.querry("all");
-        }else if(a=="default"||b=="default"){
-            bool searching=true;
-            print("Type 'q' or 'quit' to cancel\nType 'h' or 'help'");
-            print(man("search","use"));
-            while(searching){
-                string[]? txt=input($"{current}> ");
-                if(txt![0]=="q"||txt[0]=="quit"){
-                    print("Exited searching");
-                    return;
-                }else if(txt?.Length<2 || isNull(txt![0])){
-                    print("Invalid amount of arguments");
-                }else{
-                    a=txt![0];
-                    b=txt![1];
-                    searching=false;
-                }
-            }
-        }
-        db.querry("search",$"{a}",$"{b}");
+static void search(string a = "default", object b = null!) {
+    current = "searching";
+    bool processed = false;
+
+    if (a == "default" || b == null) {
+        print("Type 'q' or 'quit' to cancel\nType 'h' or 'help'");
+        print(man("search", "use"));
+        return;
     }
+    if (!processed) {
+        if (a == "pubyear" || a == "id") {
+            try { b = int.Parse(b!.ToString()!); } catch (Exception) {
+                print($"For {a}, content must be numbers");
+            }
+        } else {
+            b = b!.ToString()!;
+        }
+    }
+
+    db.querry(a, b!);
+}
     static void libraryNogui(){
         //Console.Clear();
         print("Type 'help' or 'h'");
         while(running){
             current = "library";
             string[]? a=input($"{current}> ");
-            if(a!.Length>0){
+            if(a!.Length==0){print("Type 'h' or 'help'");continue;}
                 switch(a[0]){
                     case "" or null:
                         print("Please input something");
@@ -487,8 +455,8 @@ public static string permissions="";
                     }else{
                         print("Invalid amount of arguments");
                     }
-                //improve...
-                break;
+                    //improve...
+                    break;
                     //
                     case "q" or "quit":
                         db.disconnect();
@@ -501,15 +469,28 @@ public static string permissions="";
                     break;
                     //
                     case "search":
-                    if(a.Length>3 || a.Length<2){
+                    object e;
+                    if(a.Length<2){
                         print("Invalid amount of arguments");
-                        search();
+                        continue;
                     }else if(a.Length==2){
-                        print("Searching by title");
-                        search("title",a[1]);
+                        e=a[1];
+                        a[1]="title";
+                        print($"Searching by title: {e}");
                     }else{
-                        search(a[1],a[2]);
+                        if(!db.checkTableCols(a[1])){print("Table doesnt exist");continue;}
+                        if(a[1].ToLower()=="pubyear"){a[1]="pubYear";}
+                        if(a[1]=="pubYear"||a[1].ToLower()=="id"){
+                            try{e=int.Parse(a[2]);}catch(Exception){
+                                print($"For {a[1]}, content must be numbers");
+                                continue;
+                            }
+                        }else{
+                            e=string.Join(" ",a.Skip(2));
+                        }
                     }
+                        //print($"{a[0]}, {a[1]}, {e}, {m}");
+                        search(a[1],e!);
                     break;
                     //
                     case "borrow":
@@ -530,7 +511,7 @@ public static string permissions="";
                     }else{
                         print("Invalid amount of arguments");
                     }
-                break;
+                    break;
                     //
                     case "select":
                         select();
@@ -540,9 +521,6 @@ public static string permissions="";
                         print($"Unknown Command: '{a[0]}'");
                     break;
                 }
-            }else{
-                print("Type 'h' or 'help'");
-            }
         }
     }
     static void databaseNogui(){
@@ -595,7 +573,7 @@ public static string permissions="";
                             }
                             if(!isNull(method)&&!isNull(content)){break;}
                         }
-                        db.querry("search",method,content);
+                        db.querry(method,content);
                     break;
                     //
                     case "list":
