@@ -107,13 +107,6 @@ INSERT INTO book (id, title, author, pubYear, category, available) VALUES
 (93, 'Outliers', 'Malcolm Gladwell', 2008, 'Nonfiction', 1),
 (94, 'The Power of Habit', 'Charles Duhigg', 2012, 'Self-Help', 1);
 
--- Create table reader
-CREATE TABLE `reader` (
-  cpf VARCHAR(11) PRIMARY KEY,
-  name VARCHAR(40),
-  phone INT
-);
-
 -- Create table borrow
 CREATE TABLE `borrow` (
   borrow_id INT PRIMARY KEY AUTO_INCREMENT,

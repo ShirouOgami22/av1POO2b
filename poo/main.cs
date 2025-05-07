@@ -344,7 +344,7 @@ public static string permissions="";
                         return;
                     }
                 }
-                if(permissions=="manager"){
+                if(permissions=="manager"){//improve this shit please
                     databaseNogui();
                 }else{
                     print($"You, {worker}, dont have direct acess to the database");
