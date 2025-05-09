@@ -13,15 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using ZstdSharp.Unsafe;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Data.OleDb;
-
-
-namespace LibraryApi.Controllers{
-    [ApiController]
-    [Route("library/query")]
-    public class LibraryController : ControllerBase{
-        
-    }
-}
+namespace LibraryCode{
 class Program{
 public static string current = "library";
 public static bool running=true;
@@ -609,4 +601,5 @@ static void search(string a = "default", object b = null!) {
             }
         }
     }
+}
 }
