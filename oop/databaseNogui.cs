@@ -1,11 +1,9 @@
-using static libN.NoguiLibrary;
-using static extras.extraFucns; 
-using static vars.thingyes;
-using static improving.improveding;
-using static Library.LibraryFuncs;
-using static Datas.idk;
-using System.Text.RegularExpressions;
+using static improving.Improveding;
+using Datas;
+using static Datas.Idk;
 
+using static vars.Thingyes;
+using System.Text.RegularExpressions;
 namespace dbN{
     public static class dbManager{
         public static void databaseNogui(){

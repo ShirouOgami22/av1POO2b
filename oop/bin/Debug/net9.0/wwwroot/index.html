@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="cogs.js"></script>
+</head>
+<body onload="loaded()">
+<center><h1>Library!</h1></center>
+    <div id="mainPage">
+        <aside onclick="update()">
+          <center><p>There are currently 94 books in the library</p></center><br>
+        
+          <div id="searchDiv">
+            <input type="text" placeholder="Type the book's name" id="searchBar"><button id="searchButton" onclick="search()">Search</button>
+            <br>
+            <br>
+            <button id="clearButton" onclick="clearSearch()">Clear</button>
+            <p id="adv" onclick="toggleAdvance()">Advanced</p>
+              <div hidden id="extraSearch">
+                <p>Filter by characteristic</p>
+                <select id="filterType">
+                  <option selected value="title">Title</option>
+                  <option value="author">Author</option>
+                  <option value="pubYear">Publication year</option>
+                  <option value="available">Available</option>
+                  <option value="id">Book id</option>
+                </select>
+                <div id="EM"><input type="checkbox" id="ae"><label for="ae">Exact match</label></div>
+                <div hidden id="filterYear">
+                    <p>Filter by publication year:</p>
+                    <select id="yearOptions">
+                      <option value="before">Published before:</option>
+                      <option selected value="at">Published at:</option>
+                      <option value="after">Published after:</option>
+                    </select>
+                    <input type="number" placeholder="Publication year" id="year">
+                  </div>
+              </div>
+              
+          </div>
+          <br>
+
+          <div id="menuDiv">
+            <ul>
+              <h3>Categories</h3>
+              <li><a href="">Horror</a></li>
+              <li><a href="">Encyclopedies</a></li>
+              <li><a href="">Science</a></li>
+              <li><a href="">Romance</a></li>
+              <li><a href="">etc, idk, im not an expert</a></li>
+            </ul>
+          </div>
+          
+        </aside>
+        <main>
+            <center><h1 id="mainTitle">Library content</h1></center><br>
+            <div id="bookShelf">
+              <!--
+                <div class="bookShow">
+                  <img src="" alt="">
+                  <div id="description">
+                    <a href="thisBooksPageLink?" id="title">Book title placeholder!</a>
+                    <p>author placeholder<br>year too</p>
+                  </div>
+                </div>
+              -->
+              </div>
+            </div>
+        </main>
+      </div>
+      <footer>
+        <center><p>My library...</p></center>
+      </footer>
+
+</body>
+</html>

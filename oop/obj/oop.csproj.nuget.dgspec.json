@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\thony\\Downloads\\nooo\\oop\\oop.csproj": {}
+    "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\oop.csproj": {}
   },
   "projects": {
-    "C:\\Users\\thony\\Downloads\\nooo\\oop\\oop.csproj": {
+    "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\oop.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\thony\\Downloads\\nooo\\oop\\oop.csproj",
+        "projectUniqueName": "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\oop.csproj",
         "projectName": "oop",
-        "projectPath": "C:\\Users\\thony\\Downloads\\nooo\\oop\\oop.csproj",
+        "projectPath": "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\oop.csproj",
         "packagesPath": "C:\\Users\\thony\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\thony\\Downloads\\nooo\\oop\\obj\\",
+        "outputPath": "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\thony\\AppData\\Roaming\\NuGet\\NuGet.Config"

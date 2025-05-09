@@ -120,13 +120,13 @@ h1{
     max-height: 250px;
     max-width: 200px;
 }
-.bookShow #description{
+.bookShow .description{
     position: absolute;
     max-width: 200px;
     max-height:100px;
     margin-top: -20%;
 }
-.bookShow #title{
+.bookShow .title{
     color: black;
     margin-top: -1%;
     margin-left: 2%;

@@ -1,11 +1,6 @@
-using static dbN.dbManager; 
-using static libN.NoguiLibrary;
-using static vars.thingyes;
-using static improving.improveding;
-using static Library.LibraryFuncs;
-using static Datas.idk;
+using static improving.Improveding;
+using static vars.Thingyes;
 using System.Text.RegularExpressions;
-
 namespace extras{
     public static class extraFucns{
         public static Dictionary<string,object> commands = new Dictionary<string,object>{

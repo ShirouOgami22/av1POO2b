@@ -1,11 +1,11 @@
-using static dbN.dbManager; 
-using static extras.extraFucns; 
-using static vars.thingyes;
-using static improving.improveding;
-using static Library.LibraryFuncs;
-using static Datas.idk;
 using System.Text.RegularExpressions;
-
+using static improving.Improveding;
+using static Library.LibraryFuncs;
+using static extras.extraFucns; 
+using static vars.Thingyes;
+using static Datas.Idk;
+using Datas;
+using System.Threading.Tasks;
 namespace libN{
     public static class NoguiLibrary{
        public static void libraryNogui(){
@@ -58,7 +58,6 @@ namespace libN{
                     }else if(a.Length==2){
                         e=a[1];
                         a[1]="title";
-                        print($"Searching by title: {e}");
                     }else{
                         if(!db.checkTableCols(a[1])){print("Table doesnt exist");continue;}
                         if(a[1].ToLower()=="pubyear"){a[1]="pubYear";}
@@ -71,7 +70,6 @@ namespace libN{
                             e=string.Join(" ",a.Skip(2));
                         }
                     }
-                        //print($"{a[0]}, {a[1]}, {e}, {m}");
                         search(a[1],e!);
                     break;
                     //

@@ -1,3 +1,36 @@
+function getBook(query){
+    return fetch(`/library/getBook?query=${encodeURIComponent(query)}`)
+    .then(response=>response.json());
+}
+function showBooks(data){
+    let bookshelf=document.getElementById("bookShelf");
+    if(data.length==0){
+        bookshelf.innerHTML=`<center><h2>No books found</h2></center>`;
+    }else{
+        bookshelf.innerHTML=``;
+        data.forEach(book => {
+            bookshelf.innerHTML+=`
+            <div class="bookShow">
+                <img src="imgs/default.jpg" alt="bookImage">
+                <div class="description">
+                  <a href="thisBooksPageLink?" class="title">${book.title}</a>
+                  <p>${book.author}<br>${book.pubyear}</p>
+                </div>
+              </div>
+            `//return a listttttttt helppppp
+        }).catch(err=>{
+            bookshelf.innerHTML=`<center><h2>Problem loading books<br>Check Log</h2></center>`;
+            console.error(err);
+        });
+    }
+}
+function allBooks(){
+    return fetch(`/library/getBook?query=${encodeURIComponent("all")}`)
+    .then(response=>response.json());
+}
+function loaded(){
+    showBooks(allBooks());
+}
 function toggleAdvance(){
     let settings=document.getElementById("extraSearch");
     let hidden=false;
@@ -96,9 +129,4 @@ function search(){
             alert("Stop messing around");
         return;
     }
-    getBook(type,info,year,filt);
-}
-
-function getBook(){
-    
 }
