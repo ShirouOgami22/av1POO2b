@@ -13,6 +13,10 @@ h1{
     width: 90%;
     margin-left: -1%;
 }
+#nO{
+    position: absolute;
+    margin-left: 41%;
+}
 #mainPage{
     padding:5px;
     border-radius: 10px;
@@ -133,17 +137,39 @@ h1{
     word-break: break-all;
     font-size: 15px;
 }
-.bookShow #YnA{
-    margin-top: -10%;
-    margin-left: -10%;
+.bookShow a{
+    cursor: pointer;
 }
 #bookShelf{
+    position:relative;
     display: flex;
     flex-wrap:wrap;
     gap: 10px;
     
 }
-
+.inspector{
+    height: auto;
+    width: 80%;
+    margin-left: 10%;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: darkgrey;
+    position: relative;
+}
+.inspector #description{
+    position: absolute;
+    margin-left: 52%;
+}
+.inspector h2{
+    font-size: 30px;
+}
+.inspector h3{
+    font-size: 18px;
+}
+.inspector img{
+    max-width: 50%;
+    background-color: aliceblue;
+}
 /*!--main--!*/
 footer{
     background-color: white;

@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="style.css">
     <script src="cogs.js"></script>
 </head>
-<body onload="loaded()">
+<body onload="allBooks()"><!---->
 <center><h1>Library!</h1></center>
     <div id="mainPage">
         <aside onclick="update()">
-          <center><p>There are currently 94 books in the library</p></center><br>
+          <center><p id="totalBooks"></p>
         
           <div id="searchDiv">
             <input type="text" placeholder="Type the book's name" id="searchBar"><button id="searchButton" onclick="search()">Search</button>
@@ -25,19 +25,12 @@
                   <option selected value="title">Title</option>
                   <option value="author">Author</option>
                   <option value="pubYear">Publication year</option>
-                  <option value="available">Available</option>
                   <option value="id">Book id</option>
                 </select>
-                <div id="EM"><input type="checkbox" id="ae"><label for="ae">Exact match</label></div>
-                <div hidden id="filterYear">
-                    <p>Filter by publication year:</p>
-                    <select id="yearOptions">
-                      <option value="before">Published before:</option>
-                      <option selected value="at">Published at:</option>
-                      <option value="after">Published after:</option>
-                    </select>
-                    <input type="number" placeholder="Publication year" id="year">
-                  </div>
+                <div id="EM">
+                  <input type="checkbox" id="ae"><label for="ae">Exact match</label><br>
+                  <input type="checkbox" id="av"><label for="av">Available</label>
+                </div>
               </div>
               
           </div>
@@ -67,7 +60,20 @@
                   </div>
                 </div>
               -->
-              </div>
+
+              <!--
+                <div class="inspector">
+                  <div id="description">
+                    <h2>id - title</h2>
+                    <h3>author - pubyear</h3>
+                    <h3>category</h3>
+                    <p>Available or not</p>
+                  </div>
+                  <img src="imgs/default.jpg" alt="">
+                </div>
+              -->
+
+            </div>
             </div>
         </main>
       </div>

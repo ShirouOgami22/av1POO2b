@@ -55,7 +55,6 @@ C:\Users\thony\Downloads\av1POO2b\oop\obj\Debug\net9.0\oop.AssemblyInfo.cs
 C:\Users\thony\Downloads\av1POO2b\oop\obj\Debug\net9.0\oop.csproj.CoreCompileInputs.cache
 C:\Users\thony\Downloads\av1POO2b\oop\obj\Debug\net9.0\oop.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\thony\Downloads\av1POO2b\oop\obj\Debug\net9.0\oop.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\thony\Downloads\av1POO2b\oop\obj\Debug\net9.0\oop.sourcelink.json
 C:\Users\thony\Downloads\av1POO2b\oop\obj\Debug\net9.0\oop.dll
 C:\Users\thony\Downloads\av1POO2b\oop\obj\Debug\net9.0\refint\oop.dll
 C:\Users\thony\Downloads\av1POO2b\oop\obj\Debug\net9.0\oop.pdb

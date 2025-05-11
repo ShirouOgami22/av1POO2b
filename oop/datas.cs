@@ -7,42 +7,49 @@ using MySql.Data.MySqlClient;
 namespace Datas{
     public class Database(){
         static private MySqlConnection? _db=new MySqlConnection("Server=localhost;Database=library;User=root;Password=;");
+        public int count=0;
         public void connect(){
         try{
             if(_db!.State!=System.Data.ConnectionState.Open){
                 _db.Open();
                 print("Connected to the database!");
             }else{print("Database already connected");}
-        }catch(Exception){print($"Error connecting to database\nCheck if server is up\nThe program is set to connect to localhost database named 'library'");Environment.Exit(1);}
-                using (var cmd = new MySqlCommand("select * from book", _db)){
-                    using (var reader = cmd.ExecuteReader()){
-                        while (reader.Read()){
-                            availableTables.Add(reader.GetValue(0).ToString()!);
-                        }
-                    }    
+        }catch(Exception){
+            print($"Error connecting to database\nCheck if server is up\nThe program is set to connect to localhost database named 'library'");
+            Environment.Exit(1);
+        }
+        using(var cmd = new MySqlCommand("select count(*) from book",_db)){
+            count=Convert.ToInt32(cmd.ExecuteScalar());
+        }
+        using (var cmd = new MySqlCommand("select * from book", _db)){
+            using (var reader = cmd.ExecuteReader()){
+                while (reader.Read()){
+                    availableTables.Add(reader.GetValue(0).ToString()!);
                 }
-                List<Tuple<int,string,string>> books= new List<Tuple<int,string,string>>();
-                using (var cmd = new MySqlCommand("select * from book", _db)){
-                    using (var reader = cmd.ExecuteReader()){
-                        while (reader.Read()){
-                            books.Add(new Tuple<int,string,string>(
-                                Convert.ToInt32(reader.GetValue(0)),
-                                reader.GetValue(1).ToString()!,
-                                reader.GetValue(2).ToString()!));
-                        }
-                    }    
+            }    
+        }
+        List<Tuple<int,string,string>> books= new List<Tuple<int,string,string>>();
+        using (var cmd = new MySqlCommand("select * from book", _db)){
+            using (var reader = cmd.ExecuteReader()){
+                
+                while (reader.Read()){
+                    books.Add(new Tuple<int,string,string>(
+                        Convert.ToInt32(reader.GetValue(0)),
+                        reader.GetValue(1).ToString()!,
+                        reader.GetValue(2).ToString()!));
                 }
-
-                //debug:
-                    //list all books:
-                    //for(int i=0;i<books.Count;i++){
-                    //    print($"{books[i].Item1}, {books[i].Item2}, {books[i].Item3}");
-                    //}
-                    
-                    //list all tables:
-                    //for(int i=0;i<availableTables.Count;i++){
-                    //    print($"{availableTables[i]}");
-                    //}
+            }    
+        }
+        //debug:
+            //list all books:
+            //for(int i=0;i<books.Count;i++){
+            //    print($"{books[i].Item1}, {books[i].Item2}, {books[i].Item3}");
+            //}
+            
+            //list all tables:
+            //for(int i=0;i<availableTables.Count;i++){
+            //    print($"{availableTables[i]}");
+            //}
                 
     }
         public void disconnect(){
@@ -189,7 +196,6 @@ namespace Datas{
     }
 
         public object querryWeb(string mode){
-        var results = new List<Dictionary<string,object>>();
         string comando;
         if(mode=="all"){
             comando="select * from book";
@@ -199,14 +205,13 @@ namespace Datas{
             comando="select * from book where available=0";
         }else{
             print("Unknown mode");
-            return new List<Dictionary<string, object>>();;
+            return null;
         }
+        var results = new List<Dictionary<string,object>>();
         using(var cmd = new MySqlCommand(comando,_db))
             using(var reader = cmd.ExecuteReader()){
                 int count=reader.FieldCount;
-                if(!reader.HasRows){
-                    return new List<Dictionary<string, object>>();;
-                }
+                if(!reader.HasRows){return null;}
                 while(reader.Read()){
                     var row = new Dictionary<string,object>();
                     for (int e = 0; e < count; e++){
@@ -217,37 +222,30 @@ namespace Datas{
             }
         return results;
     }
-    //public object querryWeb(string method,object content){
-    //    if(!checkTableCols(method)){
-    //        print("Unknown method");
-    //        return;
-    //    }
-    //    using(var cmd = new MySqlCommand(@$"select * from book where {method}=@content",_db)){
-    //    cmd.Parameters.AddWithValue("@content",content);
-    //    using(var reader = cmd.ExecuteReader()){
-    //        int count=reader.FieldCount;
-    //        if(!reader.HasRows){
-    //            print("No book found\n");
-    //            return;
-    //        }
-    //        while(reader.Read()){
-    //            print("");
-    //            for (int e = 0; e < count; e++){
-    //                if(reader.GetName(e)=="available"){
-    //                    string yeah="no";
-    //                    if(reader.GetValue(e).ToString()=="1"){
-    //                        yeah="yes";
-    //                    }
-    //                    print($"{reader.GetName(e)}: {yeah}");
-    //                }else{
-    //                    print($"{reader.GetName(e)}: {reader.GetValue(e)}");
-    //                }
-    //            }
-    //            print("");
-    //        }
-    //    }}
-    //}   
-        
+    public object querryWeb(string method,object content){
+        if(!checkTableCols(method)){
+            print("Unknown method");
+            return null;
+        }
+        using(var cmd = new MySqlCommand(@$"select * from book where {method}=@content",_db)){
+        cmd.Parameters.AddWithValue("@content",content);
+        using(var reader = cmd.ExecuteReader()){
+            int count=reader.FieldCount;
+            var results = new List<Dictionary<string,object>>();
+            if(!reader.HasRows){
+                return null;
+            }
+            while(reader.Read()){
+                var row = new Dictionary<string,object>();
+                for(int e = 0; e < count; e++){
+                    row[reader.GetName(e)]=reader.GetValue(e);
+                }
+                results.Add(row);
+            }
+            return results;
+        }
+    }   
+}
         public void create(string what){
     current = "creating";
     using (var cmd = new MySqlCommand($"SELECT table_name FROM information_schema.tables WHERE table_name = '{what}'", _db))
