@@ -1,1 +1,0 @@
-poo.exe database nogui
