@@ -108,94 +108,26 @@ namespace Datas{
         return false;
     }
         public bool paswd(string a,string b){
-
-        using(var cmd = new MySqlCommand($"select pasword from employee where name = @a;",_db)){
-        cmd.Parameters.AddWithValue("@a",a);
-        using(var reader = cmd.ExecuteReader()){
-            while(reader.Read()){
-                string pass=reader.GetValue(0).ToString()!.ToLower();
-                if(isNull(b)){
-                    print("Type your password");
-                    return false;
-                }
-                if(b==pass){
-                    return true;
-                }else{
-                    print("Incorrect password");
-                    return false;
-                }
-            }
-        }}
-        return false;
-    }
-        public void querry(string method,object content){
-        if(!checkTableCols(method)){
-            print("Unknown method");
-            return;
-        }
-        using(var cmd = new MySqlCommand(@$"select * from book where {method}=@content",_db)){
-        cmd.Parameters.AddWithValue("@content",content);
-        using(var reader = cmd.ExecuteReader()){
-            int count=reader.FieldCount;
-            if(!reader.HasRows){
-                print("No book found\n");
-                return;
-            }
-            while(reader.Read()){
-                print("");
-                for (int e = 0; e < count; e++){
-                    if(reader.GetName(e)=="available"){
-                        string yeah="no";
-                        if(reader.GetValue(e).ToString()=="1"){
-                            yeah="yes";
-                        }
-                        print($"{reader.GetName(e)}: {yeah}");
-                    }else{
-                        print($"{reader.GetName(e)}: {reader.GetValue(e)}");
-                    }
-                }
-                print("");
-            }
-        }}
-    }   
-        public void querry(string mode){
-        string comando;
-        if(mode=="all"){
-            comando="select * from book";
-        }else if(mode=="available"){
-            comando="select * from book where available=1";
-        }else if(mode=="unavailable"){
-            comando="select * from book where available=0";
-        }else{
-            print("Unknown mode");
-            return;
-        }
-        using(var cmd = new MySqlCommand(comando,_db))
+            using(var cmd = new MySqlCommand($"select pasword from employee where name = @a;",_db)){
+            cmd.Parameters.AddWithValue("@a",a);
             using(var reader = cmd.ExecuteReader()){
-                int count=reader.FieldCount;
-                if(!reader.HasRows){
-                    print("No books found");
-                    return;
-                }
                 while(reader.Read()){
-                    print("");
-                    for (int e = 0; e < count; e++){
-                        if(reader.GetName(e)=="available"){
-                            string yeah="no";
-                            if(reader.GetValue(e).ToString()=="1"){
-                                yeah="yes";
-                            }
-                            print($"{reader.GetName(e)}: {yeah}");
-                        }else{
-                            print($"{reader.GetName(e)}: {reader.GetValue(e)}");
-                        }
+                    string pass=reader.GetValue(0).ToString()!.ToLower();
+                    if(isNull(b)){
+                        print("Type your password");
+                        return false;
                     }
-                    print("");
+                    if(b==pass){
+                        return true;
+                    }else{
+                        print("Incorrect password");
+                        return false;
+                    }
                 }
-            }
-    }
-
-        public object querryWeb(string mode){
+            }}
+            return false;
+        }
+        public object querry(string mode){
         string comando;
         if(mode=="all"){
             comando="select * from book";
@@ -205,13 +137,13 @@ namespace Datas{
             comando="select * from book where available=0";
         }else{
             print("Unknown mode");
-            return null;
+            return null!;
         }
-        var results = new List<Dictionary<string,object>>();
+        List<Dictionary<string,object>> results = new List<Dictionary<string,object>>();
         using(var cmd = new MySqlCommand(comando,_db))
             using(var reader = cmd.ExecuteReader()){
                 int count=reader.FieldCount;
-                if(!reader.HasRows){return null;}
+                if(!reader.HasRows){return null!;}
                 while(reader.Read()){
                     var row = new Dictionary<string,object>();
                     for (int e = 0; e < count; e++){
@@ -222,10 +154,10 @@ namespace Datas{
             }
         return results;
     }
-    public object querryWeb(string method,object content){
+        public object querry(string method,object content){
         if(!checkTableCols(method)){
             print("Unknown method");
-            return null;
+            return null!;
         }
         using(var cmd = new MySqlCommand(@$"select * from book where {method}=@content",_db)){
         cmd.Parameters.AddWithValue("@content",content);
@@ -233,7 +165,7 @@ namespace Datas{
             int count=reader.FieldCount;
             var results = new List<Dictionary<string,object>>();
             if(!reader.HasRows){
-                return null;
+                return null!;
             }
             while(reader.Read()){
                 var row = new Dictionary<string,object>();

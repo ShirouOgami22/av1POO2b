@@ -83,7 +83,7 @@ namespace libN{
                                 print("Invalid argument to list");
                                 break;
                         }else if(a[1]=="all"||a[1]=="available"||a[1]=="unavailable"){
-                            db.querry(a[1]);
+                            list(a[1]);
                         }else{
                             print("invalid filter");
                             break;

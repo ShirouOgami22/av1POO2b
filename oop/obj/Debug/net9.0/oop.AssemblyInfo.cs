@@ -13,7 +13,11 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("oop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4b8b8e0038420d4bba3207e15f24069d0ca89f2e")]
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e8a0cf1ba4bbf9adf80fa92d6ed93837857b61d7")]
+>>>>>>> ec54404 (uhh nice tweaks in the no gui code, simplified the database class, now i dont have 4, but 2 query methods and the results are properly worked on according to with or without gui)
 [assembly: System.Reflection.AssemblyProductAttribute("oop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("oop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -71,7 +71,43 @@ namespace Library{
                     b = b!.ToString()!;
                 }
             }
-            db.querry(a, b!);
+            List<Dictionary<string,object>> book = (List<Dictionary<string,object>>)db.querry(a, b!);
+            for(int i = 0; i < book.Count;i++){
+                string av="No";
+                if(Convert.ToInt32(book[i]["available"])==1){
+                    av="Yes";
+                }
+                print("");
+                print($"Id: {book[i]["id"]}");
+                print($"Title: {book[i]["title"]}");
+                print($"Author: {book[i]["author"]}");
+                print($"Publication Year: {book[i]["pubYear"]}");
+                print($"Category: {book[i]["category"]}");
+                print($"Available: {av}");
+                print("");
+            }
+        }
+        public static void list(string a){
+            List<Dictionary<string,object>> book = (List<Dictionary<string,object>>)db.querry(a);
+            if(book==null||book.Count == 0){
+                print("No books found");
+                return;
+            }
+            for(int i = 0; i < book.Count;i++){
+                string av="No";
+                if(Convert.ToInt32(book[i]["available"])==1){
+                    av="Yes";
+                }
+                print("");
+                print($"Id: {book[i]["id"]}");
+                print($"Title: {book[i]["title"]}");
+                print($"Author: {book[i]["author"]}");
+                print($"Publication Year: {book[i]["pubYear"]}");
+                print($"Category: {book[i]["category"]}");
+                print($"Available: {av}");
+                print("");
+            }
         }
     }
+
 }

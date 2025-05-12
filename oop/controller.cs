@@ -13,12 +13,12 @@ namespace Controller{
         }
         [HttpGet("ListBooks/all")]
         public IActionResult getAll(){
-            return Ok(db.querryWeb("all"));
+            return Ok(db.querry("all"));
         }
 
         [HttpGet("GetBook/{aspect}")]
         public IActionResult getBook(string aspect, [FromQuery] string query){
-            return Ok(db.querryWeb(aspect,query));
+            return Ok(db.querry(aspect,query));
         }
     }   
 }
