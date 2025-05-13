@@ -97,10 +97,12 @@ function update(){
 
 function clearSearch(){
     document.getElementById("searchBar").value="";
+    Select("close");
     allBooks();
 }
 
 function search(){
+    Select("close");
     let type=document.getElementById("filterType").value;
     let info=document.getElementById("searchBar").value;
     switch(type){

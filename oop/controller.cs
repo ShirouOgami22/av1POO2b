@@ -8,7 +8,6 @@ namespace Controller{
     public class Controls : ControllerBase{
         [HttpGet("Count")]
         public IActionResult Tbooks(){
-            print(db.count.ToString());
             return Ok(db.count.ToString());
         }
         [HttpGet("ListBooks/all")]
