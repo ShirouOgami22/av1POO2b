@@ -19,6 +19,14 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+<<<<<<< HEAD
 		SolutionGuid = {28D24380-01D6-4560-A96C-E5A762B156ED}
+=======
+<<<<<<< HEAD
+		SolutionGuid = {AE2B3D4E-3B9C-4E8D-BF29-32B5949CB6AD}
+=======
+		SolutionGuid = {28D24380-01D6-4560-A96C-E5A762B156ED}
+>>>>>>> 91130ff (forgot to update here, dont even know the changes lol)
+>>>>>>> f8e5cae (today i have fixed some stuff in html like the viwer... also i had some changes i didnt push from yesterday so i dont really know what i did in my main pc)
 	EndGlobalSection
 EndGlobal

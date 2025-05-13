@@ -13,7 +13,15 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("oop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e8a0cf1ba4bbf9adf80fa92d6ed93837857b61d7")]
+=======
+<<<<<<< HEAD
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+87a3690e346133d587570b6245b7474d76a3efdb")]
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e8a0cf1ba4bbf9adf80fa92d6ed93837857b61d7")]
+>>>>>>> 91130ff (forgot to update here, dont even know the changes lol)
+>>>>>>> f8e5cae (today i have fixed some stuff in html like the viwer... also i had some changes i didnt push from yesterday so i dont really know what i did in my main pc)
 [assembly: System.Reflection.AssemblyProductAttribute("oop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("oop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

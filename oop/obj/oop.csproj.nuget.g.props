@@ -5,11 +5,27 @@
     <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
     <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
     <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
+<<<<<<< HEAD
     <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\thony\.nuget\packages\</NuGetPackageFolders>
+=======
+<<<<<<< HEAD
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\anthony_guerra\.nuget\packages\</NuGetPackageFolders>
+=======
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\thony\.nuget\packages\</NuGetPackageFolders>
+>>>>>>> 91130ff (forgot to update here, dont even know the changes lol)
+>>>>>>> f8e5cae (today i have fixed some stuff in html like the viwer... also i had some changes i didnt push from yesterday so i dont really know what i did in my main pc)
     <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
     <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">6.13.2</NuGetToolVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+<<<<<<< HEAD
     <SourceRoot Include="C:\Users\thony\.nuget\packages\" />
+=======
+<<<<<<< HEAD
+    <SourceRoot Include="C:\Users\anthony_guerra\.nuget\packages\" />
+=======
+    <SourceRoot Include="C:\Users\thony\.nuget\packages\" />
+>>>>>>> 91130ff (forgot to update here, dont even know the changes lol)
+>>>>>>> f8e5cae (today i have fixed some stuff in html like the viwer... also i had some changes i didnt push from yesterday so i dont really know what i did in my main pc)
   </ItemGroup>
 </Project>

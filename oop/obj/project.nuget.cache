@@ -1,6 +1,14 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "dgSpecHash": "VEblD32QGJg=",
+=======
+<<<<<<< HEAD
+  "dgSpecHash": "b0DZqnQhI4c=",
+=======
+  "dgSpecHash": "VEblD32QGJg=",
+>>>>>>> 91130ff (forgot to update here, dont even know the changes lol)
+>>>>>>> f8e5cae (today i have fixed some stuff in html like the viwer... also i had some changes i didnt push from yesterday so i dont really know what i did in my main pc)
   "success": true,
   "projectFilePath": "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\oop.csproj",
   "expectedPackageFiles": [
