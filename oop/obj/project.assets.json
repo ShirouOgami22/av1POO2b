@@ -2112,31 +2112,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\anthony_guerra\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\thony\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\anthony_guerra\\Documents\\av1POO2b\\oop\\oop.csproj",
+      "projectUniqueName": "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\oop.csproj",
       "projectName": "oop",
-      "projectPath": "C:\\Users\\anthony_guerra\\Documents\\av1POO2b\\oop\\oop.csproj",
-      "packagesPath": "C:\\Users\\anthony_guerra\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\anthony_guerra\\Documents\\av1POO2b\\oop\\obj\\",
+      "projectPath": "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\oop.csproj",
+      "packagesPath": "C:\\Users\\thony\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\anthony_guerra\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\thony\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

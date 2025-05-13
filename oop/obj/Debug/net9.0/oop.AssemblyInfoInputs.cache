@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-3fac5dded1fa2f900578b4128138ad14ab78836faf701b6bf1bbc20983a62ff9
-=======
 1881fd1a76a283db7eee8d0f96c6d7f086ad42f78d76b3ae4aba7f2db55d2ec0
->>>>>>> ec54404 (uhh nice tweaks in the no gui code, simplified the database class, now i dont have 4, but 2 query methods and the results are properly worked on according to with or without gui)
