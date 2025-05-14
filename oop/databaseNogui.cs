@@ -39,53 +39,34 @@ namespace dbN{
                 break;
                     //
                     case "query":
-                        string method="";
-                        string content="";
-                        if(a.Length>1&&a.Length<5){
-                            if(!isNull(a[1])){method=a[1];}
-                            if(!isNull(a[2])){content=a[2];}
-                        }else{
-                            print("Incorrect amount of arguments");
-                        }
-                        while(true){
-                            if(isNull(method)){
-                                method=input("mode: ")![0];
-                            }
-                            if(isNull(content)){
-                                content=string.Join(" ",input("content: ")!);
-                            }
-                            if(!isNull(method)&&!isNull(content)){break;}
-                        }
-                        db.querry(method,content);
+                        //query
                     break;
                     //
                     case "list":
-                    
+                        //list
                     break;
                     //
                     case "create":
-                        if(a.Length!=2){
-                            print("Invalid amount of arguments");
-                            break;
+                        if(a.Length<2 || a.Length>2){
+                            print("Invalid amount of arguments for 'create'");
+                            print("You may create one of:");
+                            print("book, user");//could be changed for a query... nahh
+                        }else{
+                            
                         }
-                        db.create(a[1]);
                     break;
                     //
                     case "drop":
-
-                break;
-                    //
-                    case "input":
-
-                break;
+                        //drop something
+                    break;
                     //
                     case "update":
-
-                break;
+                        //update a value
+                    break;
                     //
                     default:
-                    print($"Unknown Command: '{a[0]}'");
-                break;
+                        print($"Unknown Command: '{a[0]}'");
+                    break;
                 }
             }else{
                 print("Type 'h' or 'help'");

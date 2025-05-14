@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library - Login</title>
+    <style>
+        body{
+            position: relative;
+            background-color: lightgray;
+            font-family: monospace;
+            user-select: none;
+        }
+        img{
+            position: absolute;
+            height: 75%;
+            border-radius: 5px;
+            margin-left: 5%;
+            margin-top: 2%;
+        }
+        p{
+            margin-top: 0;
+            margin-bottom: 0;
+            margin-left: 2%;
+            color: red;
+        }
+        #main{
+            background-color: darkgray;
+            max-width: 60%;
+            height: 550px;
+            margin-left: 20%;
+            margin-top: 10%;
+            border-radius: 4px;
+            padding: 5px;
+            position: relative;
+        }
+        #creds{
+            position: absolute;
+            background-color: whitesmoke;
+            border-radius: 5px;
+            padding: 5px;
+            margin-top: 5%;
+            margin-left: 50%;
+            max-height: 60%;
+            width: 40%;
+        }
+        #creds input{
+            background-color: white;
+            border-radius: 2px;
+            height: 15%;
+            width: 80%;
+            font-size: 25px;
+            margin-left: 2%;
+        }
+        #creds h2{
+            margin-left: 2%;
+        }
+        #creds button{
+            background-color: darkcyan;
+            border-radius: 3px;
+            margin-left: 2%;
+            margin-top: 3%;
+            cursor: pointer;
+            height: 12%;
+            width: 15%;
+            font-size:14px ;
+        }
+    </style>
+    <script>
+        function submit(){
+            let psP= document.getElementById("psP");
+            let usP= document.getElementById("usP");
+            let usr= document.getElementById("name").value;
+            let pas= document.getElementById("password").value;
+            if(usr.length==0){
+                for(let i=0;i<usr.length;i++){
+                    if(usr[i]=="-"||usr[i]=="\""){
+                        usr.innerText="Ivalid characters"
+                        return;
+                }
+            }
+                usP.innerText="Type your name!"; 
+                return;
+            }
+            if(pas.length==0){
+                for(let i=0;i<pas.length;i++){
+                    if(pas[i]=="-"||pas[i]=="\""){
+                        pas.innerText="Ivalid characters"
+                        return;
+                }
+            }
+                psP.innerText="Type the password!";
+                return;
+            }
+            psP.innerText="";
+            usP.innerText="";
+            fetch(`/library/LogIn?query=${encodeURIComponent(usr)};${encodeURIComponent(pas)}`)
+                .then(response=>{if(!response.ok){
+                    usP.innerText="Invalid username or password";
+                    return response.text().then(err => {
+                        console.log(err);
+                    });
+                }
+                window.location.href=response.url;
+            }).catch(err=>{console.log(err)});
+            
+        }
+    </script>
+</head>
+<body>
+    <div id="main">
+        <center>
+            <h1>Log in into library</h1>
+        </center>
+        <img src="imgs/default.jpg" alt="Library idk... placeholder">
+        <div id="creds">
+            <h2 style="margin-top: 0;">Name</h2>
+            <input type="text" id="name" placeholder="Type your name">
+            <p id="usP"></p>
+            <br>
+            <h2>Password</h2>
+            <input type="password" id="password" placeholder="Type your password">
+            <p id="psP"></p>
+            <br>
+            <button id="sub" onclick="submit()">submit</button>
+        </div>
+    </div>
+</body>
+</html>

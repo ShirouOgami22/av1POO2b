@@ -52,6 +52,7 @@ namespace Datas{
             //}
                 
     }
+
         public void disconnect(){
         try{
             if(_db!.State!=System.Data.ConnectionState.Closed){
@@ -60,6 +61,7 @@ namespace Datas{
             }else{print("No database connected");}
         }catch(Exception err){print($"Error disconnecting database:\n-'{err}'-");}
     }
+
         public bool checkTableCols(string columnName,string table=@"book"){
         using (var command = new MySqlCommand($"select column_name from information_schema.columns where table_name = @table and column_name = @columnName", _db)){
         command.Parameters.AddWithValue("@table", table);
@@ -75,6 +77,7 @@ namespace Datas{
         }}
         return false;
     }
+
         public bool logIn(string a){
         if(isNull(a)){
             print("invalid user?");
@@ -87,7 +90,7 @@ namespace Datas{
                 }
             }
         }
-        using(var cmd = new MySqlCommand($"select * from employee where name = @a;",_db)){
+        using(var cmd = new MySqlCommand($"select * from user where name = @a;",_db)){
         cmd.Parameters.AddWithValue("@a", a);
         using(var reader = cmd.ExecuteReader()){
             int found=reader.FieldCount;
@@ -99,7 +102,7 @@ namespace Datas{
                         permissions=reader.GetValue(i).ToString()!;
                     }
                     if((!isNull(worker))&&(!isNull(permissions))){
-                       return true; 
+                       return true;
                     }
                 }
                 return false;
@@ -107,12 +110,14 @@ namespace Datas{
         }}
         return false;
     }
-        public bool paswd(string a,string b){
-            using(var cmd = new MySqlCommand($"select pasword from employee where name = @a;",_db)){
+
+        public bool paswd(string b,string a){
+            if(a!=worker){return false;}
+            using(var cmd = new MySqlCommand($"select pasword from user where name = @a;",_db)){
             cmd.Parameters.AddWithValue("@a",a);
             using(var reader = cmd.ExecuteReader()){
                 while(reader.Read()){
-                    string pass=reader.GetValue(0).ToString()!.ToLower();
+                    string pass=reader.GetValue(0).ToString()!;
                     if(isNull(b)){
                         print("Type your password");
                         return false;
@@ -127,6 +132,7 @@ namespace Datas{
             }}
             return false;
         }
+
         public object querry(string mode){
         string comando;
         if(mode=="all"){
@@ -154,6 +160,7 @@ namespace Datas{
             }
         return results;
     }
+
         public object querry(string method,object content){
         if(!checkTableCols(method)){
             print("Unknown method");
@@ -178,59 +185,74 @@ namespace Datas{
         }
     }   
 }
+        
+        //public boolean queryUser(string user){
+        //    using(var cmd = new MySqlCommand("select name from user",_db)){
+        //        using(var reader = cmd.ExecuteReader()){
+        //            int counter=reader.FieldCount;
+        //            while(reader.Read()){
+        //                if(reader.GetValue(0) == user){
+        //                    return true;
+        //                }
+        //            }
+        //            return null;
+        //        }    
+        //    }
+        //}
+
         public void create(string what){
-    current = "creating";
-    using (var cmd = new MySqlCommand($"SELECT table_name FROM information_schema.tables WHERE table_name = '{what}'", _db))
-    using (var reader = cmd.ExecuteReader()){
-        bool ok = false;
-        if (!reader.HasRows){
-            print("Cannot create item for unexisting table");
-            return;
-        }
-        while (reader.Read()){
-            for(int i = 0; i < reader.FieldCount; i++){
-                if(reader.GetValue(i).ToString() == what){
-                    ok = true;
-                    break;
+            current = "creating";
+            using (var cmd = new MySqlCommand($"SELECT table_name FROM information_schema.tables WHERE table_name = '{what}'", _db))
+            using (var reader = cmd.ExecuteReader()){
+                bool ok = false;
+                if (!reader.HasRows){
+                    print("Cannot create item for unexisting table");
+                    return;
+                }
+                while (reader.Read()){
+                    for(int i = 0; i < reader.FieldCount; i++){
+                        if(reader.GetValue(i).ToString() == what){
+                            ok = true;
+                            break;
+                        }
+                    }
+                    if (ok) break;
+                }
+                if(!ok){
+                    print("Cannot create item for unexisting table");
+                    return;
                 }
             }
-            if (ok) break;
-        }
-        if(!ok){
-            print("Cannot create item for unexisting table");
-            return;
-        }
-    }
-    using (var cmd = new MySqlCommand($"SELECT column_name, extra FROM information_schema.columns WHERE table_name = '{what}' AND table_schema = DATABASE()", _db))
-    using (var reader = cmd.ExecuteReader()) {
-        List<string> cols = new List<string>();
-        while (reader.Read()) {
-            string extra = reader.IsDBNull(1) ? "" : reader.GetString(1);
-            if (extra.ToLower().Contains("auto_increment")){
-                continue;
-            }
+            using (var cmd = new MySqlCommand($"SELECT column_name, extra FROM information_schema.columns WHERE table_name = '{what}' AND table_schema = DATABASE()", _db))
+            using (var reader = cmd.ExecuteReader()) {
+                List<string> cols = new List<string>();
+                while (reader.Read()) {
+                    string extra = reader.IsDBNull(1) ? "" : reader.GetString(1);
+                    if (extra.ToLower().Contains("auto_increment")){
+                        continue;
+                    }
 
-            cols.Add(reader.GetString(0));
-        }
-        if (cols.Count == 0){
-            print("Something went wrong");
-            return;
-        }
-
-        for (int i = 0; i < cols.Count; i++){
-            while (true) {
-                object? inp = string.Join(" ",input($"{current}: {what}: {cols.ElementAt(i)}> ")![0]);
-                if (isNull(inp.ToString()!)) {
-                    print("Cannot be empty!");
-                    continue;
+                    cols.Add(reader.GetString(0));
                 }
-                print($"{inp.GetType()}");
-                break;
+                if (cols.Count == 0){
+                    print("Something went wrong");
+                    return;
+                }
+
+                for (int i = 0; i < cols.Count; i++){
+                    while (true) {
+                        object? inp = string.Join(" ",input($"{current}: {what}: {cols.ElementAt(i)}> ")![0]);
+                        if (isNull(inp.ToString()!)) {
+                            print("Cannot be empty!");
+                            continue;
+                        }
+                        print($"{inp.GetType()}");
+                        break;
+                    }
+                }
+
             }
         }
-
-    }
-}
         
     }
     public static class Idk{

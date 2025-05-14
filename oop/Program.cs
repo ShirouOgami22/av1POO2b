@@ -21,7 +21,7 @@ db.connect();
             libraryNogui();
         }else if(args[0].ToLower()=="library" && args[1].ToLower()=="gui"){
             app.UseStaticFiles();
-            app.MapFallbackToFile("index.html");
+            app.MapFallbackToFile("login.html");
             app.MapControllers();
             app.Run();
         }else if(args[0].ToLower()=="database" && args[1].ToLower()=="nogui"){

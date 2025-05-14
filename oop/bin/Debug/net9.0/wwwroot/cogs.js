@@ -1,3 +1,9 @@
+function loaded(){
+    showBooks(allBooks());
+    fetch(`/library/UserCreds`).then(back=>back.text())
+    .then(creds=>type=creds);
+}
+
 function getBook(method,query){
     fetch(`/library/GetBook/${method}?query=${encodeURIComponent(query)}`)
     .then(response=>response.json())
@@ -24,12 +30,14 @@ function showBooks(data){
        });
     }
 }
+
 function allBooks(){
     fetch(`/library/Count`).then(response=>response.text()).then(response=>
         document.getElementById("totalBooks").innerText=`There are ${response} books in the library`);
     fetch(`/library/ListBooks/all`).then(response=>response.json()).then(response=>showBooks(response));
     
 }
+
 function selectBook(aspect,info){
     fetch(`/library/GetBook/${aspect}?query=${encodeURIComponent(info)}`)
     .then(response=>response.json())
@@ -61,6 +69,7 @@ function selectBook(aspect,info){
         
     }))
 }
+
 function toggleAdvance(){
     let settings=document.getElementById("extraSearch");
     let hidden=false;

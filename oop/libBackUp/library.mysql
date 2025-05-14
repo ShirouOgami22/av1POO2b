@@ -183,13 +183,13 @@ CREATE TABLE borrow (
   returned int DEFAULT 0
 );
 
-CREATE TABLE employee (
+CREATE TABLE user (
   id int primary key auto_increment,
   name varchar(30),
   role varchar(20),
   pasword varchar(255)
 );
 
-INSERT INTO employee (name, role, pasword) VALUES
+INSERT INTO user (name, role, pasword) VALUES
 ('admin', 'manager', 'admin'),
 ('user', 'user', 'user');
