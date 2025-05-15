@@ -12,3 +12,6 @@ there are currently 2 projects here:
         nothing for now, has all the functions of the old program, but is under development to have a gui available
 
 the project is under development and far from complete
+
+-- note --
+this is just a school project, so there is no dedicated protection against sql injection, code injection, url poisoning or security at all, dataBase does not work with hash and passwords are not encrypted
