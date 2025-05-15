@@ -1,3 +1,5 @@
+//add sorting books by:
+//smth
 function loaded(){
     showBooks(allBooks());
     fetch(`/library/UserCreds`).then(back=>back.text())
@@ -53,38 +55,36 @@ function selectBook(aspect,info){
         if(book.available==1){
             a="available";
         }
-        let bookshelf=document.getElementById("bookShelf");
-        bookshelf.innerHTML="";
+        let bookshelf=document.getElementById("bookSearch");
         bookshelf.innerHTML=`
         <div class="inspector">
-        <div id="description">
-        <h2>${book.id} - ${book.title}</h2>
-        <h3>${book.author} - ${book.pubYear}</h3>
-        <h3>${book.category}</h3>
-        <p>${a}</p>
-        </div>
-        <img src="imgs/default.jpg" alt="">
+            <div id="description">
+                <h2>${book.id} - ${book.title}</h2>
+                <h3>${book.author} - ${book.pubYear}</h3>
+                <h3>${book.category}</h3>
+                <p>${a}</p>
+            </div>
+            <button onclick="Select('close')">X</button>
+            <img src="imgs/default.jpg" alt="">
         </div>
         `;
-        
+        Select("open");
     }))
 }
 
-function toggleAdvance(){
-    let settings=document.getElementById("extraSearch");
-    let hidden=false;
-    for(let i=0;i<settings.attributes.length;i++){
-        if(settings.attributes[i].name.toString()=="hidden"){
-            hidden=true;
-            break;
-        }
-    }
-    if(hidden){
-        settings.removeAttribute("hidden");
+function Select(a){
+    let bookshelf=document.getElementById("bookShelf").querySelectorAll("div");
+    let bookSearch=document.getElementById("bookSearch");
+    if(a=="open"){
+        bookshelf.forEach(book=>book.setAttribute("hidden",""));
+        bookSearch.removeAttribute("hidden");
+    }else if(a=="close"){
+        bookSearch.setAttribute("hidden","");
+        bookshelf.forEach(book=>book.removeAttribute("hidden"));
     }else{
-        settings.setAttribute("hidden","");
+        console.log("Error: Unknown method to 'select' at function 'Select(a)'")
+        return;
     }
-    
 }
 
 function update(){

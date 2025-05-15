@@ -157,6 +157,13 @@ h1{
     background-color: darkgrey;
     position: relative;
 }
+.inspector button{
+    position: absolute;
+    cursor:pointer;
+    border-radius: 3px;
+    background-color: lightcoral;
+    margin-left: 96%;
+}
 .inspector #description{
     position: absolute;
     margin-left: 52%;
