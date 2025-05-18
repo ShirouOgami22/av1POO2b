@@ -115,11 +115,11 @@
         <img src="imgs/default.jpg" alt="Library idk... placeholder">
         <div id="creds">
             <h2 style="margin-top: 0;">Name</h2>
-            <input type="text" id="name" placeholder="Type your name">
+            <input onkeydown="if(event.key==='Enter')submit();" type="text" id="name" placeholder="Type your name">
             <p id="usP"></p>
             <br>
             <h2>Password</h2>
-            <input type="password" id="password" placeholder="Type your password">
+            <input onkeydown="if(event.key==='Enter')submit();" type="password" id="password" placeholder="Type your password">
             <p id="psP"></p>
             <br>
             <button id="sub" onclick="submit()">submit</button>

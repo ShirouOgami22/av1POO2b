@@ -151,3 +151,4 @@ C:\Users\anthony_guerra\Documents\av1POO2b\oop\obj\Debug\net9.0\refint\oop.dll
 C:\Users\anthony_guerra\Documents\av1POO2b\oop\obj\Debug\net9.0\oop.pdb
 C:\Users\anthony_guerra\Documents\av1POO2b\oop\obj\Debug\net9.0\oop.genruntimeconfig.cache
 C:\Users\anthony_guerra\Documents\av1POO2b\oop\obj\Debug\net9.0\ref\oop.dll
+C:\Users\thony\Downloads\av1POO2b\oop\obj\Debug\net9.0\oop.sourcelink.json

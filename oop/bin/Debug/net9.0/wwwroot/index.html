@@ -7,20 +7,19 @@
     <link rel="stylesheet" href="style.css">
     <script src="cogs.js"></script>
 </head>
-<body onload="loaded()"><!---->
+<body onkeydown="if(event.key==='Escape')Select('close');" onload="loaded()"><!---->
 <center><h1>Library!</h1></center>
     <div id="mainPage">
         <aside onclick="update()">
           <div><center><p id="totalBooks"></p></center>
         
           <div id="searchDiv">
-            <input type="text" placeholder="Type the book's name" id="searchBar"><button id="searchButton" onclick="search()">Search</button>
+            <input onkeydown="if(event.key==='Enter')search();" type="text" placeholder="Type the book's name" id="searchBar"><button id="searchButton" onclick="search()">Search</button>
             <br>
             <br>
             <button id="clearButton" onclick="clearSearch()">Clear</button>
-            <p id="adv" onclick="toggleAdvance()">Advanced</p>
-              <div hidden id="extraSearch">
-                <p>Filter by characteristic</p>
+              <div id="extraSearch">
+                <p>Search by characteristic</p>
                 <select id="filterType">
                   <option selected value="title">Title</option>
                   <option value="author">Author</option>
@@ -28,15 +27,15 @@
                   <option value="id">Book id</option>
                 </select>
                 <div id="EM">
-                  <input type="checkbox" id="ae"><label for="ae">Exact match</label><br>
+                  <!--<input type="checkbox" id="ae"><label for="ae">Exact match</label><br>-->
                   <input type="checkbox" id="av"><label for="av">Available</label>
                 </div>
               </div>
-              
           </div>
           <br>
 
           <div id="menuDiv">
+            <!--
             <ul>
               <h3>Categories</h3>
               <li><a href="">Horror</a></li>
@@ -45,6 +44,7 @@
               <li><a href="">Romance</a></li>
               <li><a href="">etc, idk, im not an expert</a></li>
             </ul>
+            -->
           </div>
           
         </aside>

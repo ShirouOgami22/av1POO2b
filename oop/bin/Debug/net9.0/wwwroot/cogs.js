@@ -1,9 +1,8 @@
-//add sorting books by:
-//smth
+let userType;
 function loaded(){
     showBooks(allBooks());
     fetch(`/library/UserCreds`).then(back=>back.text())
-    .then(creds=>type=creds);
+    .then(creds=>userType=creds);
 }
 
 function getBook(method,query){
@@ -39,8 +38,11 @@ function allBooks(){
     fetch(`/library/ListBooks/all`).then(response=>response.json()).then(response=>showBooks(response));
     
 }
-
+//function editBook(){
+//    Select("open"); //edit boookkskk
+//}
 function selectBook(aspect,info){
+    let Hhtml="";
     fetch(`/library/GetBook/${aspect}?query=${encodeURIComponent(info)}`)
     .then(response=>response.json())
     .then(data=>data.forEach(book=>{
@@ -55,6 +57,9 @@ function selectBook(aspect,info){
         if(book.available==1){
             a="available";
         }
+        if(userType="manager"){
+            Hhtml=`<button onclick="editBook()">Edit</button>`
+        }
         let bookshelf=document.getElementById("bookSearch");
         bookshelf.innerHTML=`
         <div class="inspector">
@@ -64,6 +69,7 @@ function selectBook(aspect,info){
                 <h3>${book.category}</h3>
                 <p>${a}</p>
             </div>
+            ${Hhtml}
             <button onclick="Select('close')">X</button>
             <img src="imgs/default.jpg" alt="">
         </div>
@@ -98,6 +104,7 @@ function update(){
         serch.setAttribute("placeholder","Type the book's id");
     }else if(yearFilter=="author"){
         serch.setAttribute("placeholder","Type the book author's name");
+        serch.setAttribute("type","text");
     }else{
         serch.setAttribute("type","text");
         serch.setAttribute("placeholder","Type the book's name");

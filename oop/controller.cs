@@ -10,10 +10,11 @@ namespace Controller{
     public class Controls : ControllerBase{
         [HttpGet("UserCreds")]
         public IActionResult auth(){
-            if(permissions!="manager"){
+            if(permissions=="manager"){
                 return Ok("manager");
+            }else{
+                return Ok("user");
             }
-            return Ok("user");
         }
         [HttpGet("Count")]
         public IActionResult Tbooks(){
