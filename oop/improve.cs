@@ -14,6 +14,6 @@ namespace improving{
              return Regex.Matches(txt!, @"(?:\"".*?\"")|(?:\S+)").Cast<Match>().Select(m => m.Value.Trim('"')).ToArray();
         }
     }
-    public static bool isNull(string a){if(a==null||a==""){return true;}return false;}
+    public static bool isNull(string a) => string.IsNullOrEmpty(a);
     }    
 }

@@ -1,26 +1,25 @@
-let userType;
-function loaded(){
-    showBooks(allBooks());
+let userType=null;
+async function loaded(){
+    await allBooks();
     fetch(`/library/UserCreds`).then(back=>back.text())
     .then(creds=>userType=creds);
 }
-
-function getBook(method,query){
-    fetch(`/library/GetBook/${method}?query=${encodeURIComponent(query)}`)
+async function getBook(method,query){
+    return fetch(`/library/GetBook/${method}?query=${encodeURIComponent(query)}`)
     .then(response=>response.json())
-    .then(data=>{console.log(data);showBooks(data)})
-    .catch(err=>showBooks(null));
+    .then(data=>{return data})
+    .catch(err=>{return null});
 }
 
 function showBooks(data){
     let bookshelf=document.getElementById("bookShelf");
-    if(data==null||data==0){
+    if(data==null||data==0||data.length==0){
         bookshelf.innerHTML=`<center><h2 id="nO">No books found<br>Did you type it right?</h2></center>`;
     }else{
        bookshelf.innerHTML="";
        data.forEach(book => {
            bookshelf.innerHTML+=`
-           <div class="bookShow">
+           <div id="book${book.id}" class="bookShow">
                <img src="imgs/default.jpg" alt="bookImage">
                <div class="description">
                  <a onclick='selectBook("title","${book.title}")' class="title">${book.title}</a>
@@ -32,45 +31,115 @@ function showBooks(data){
     }
 }
 
-function allBooks(){
-    fetch(`/library/Count`).then(response=>response.text()).then(response=>
+async function allBooks(){
+    await fetch(`/library/Count`).then(response=>response.text()).then(response=>
         document.getElementById("totalBooks").innerText=`There are ${response} books in the library`);
-    fetch(`/library/ListBooks/all`).then(response=>response.json()).then(response=>showBooks(response));
+    await fetch(`/library/ListBooks/all`).then(response=>response.json()).then(response=>showBooks(response));
     
 }
-//function editBook(){
-//    Select("open"); //edit boookkskk
-//}
+
+async function deleteBook(id){
+    let target=await getBook("id",id);
+    target=target[0];
+    if(confirm(`do you really wish to delete the book:\n"${target.title}"\nthis action is irreversible!`)){
+        Select("close");
+        fetch(`/library/rmBook?query=${encodeURIComponent(target.id)}`)//work on response
+    }
+    document.getElementById(`book${id}`).remove();
+}
+
+async function editBook(id){
+    Select("open");
+    let book=await getBook("id",id);
+    book=book[0];
+    let cancelButton=document.getElementById("cancel");
+    let editButton=document.getElementById("edit");
+    
+    editButton.setAttribute("onclick",`saveBook(${id})`);
+    editButton.innerText="Save";
+    cancelButton.innerText="Cancel";
+    cancelButton.removeAttribute("hidden");
+    cancelButton.setAttribute("onclick",`selectBook('id',${id})`);
+    document.getElementById("description").innerHTML=`
+        <h2 id="ide"># ${book['id']}</h2>
+        <h3>Title</h3>
+        <input type="text" id="tit">
+        <h3>Author</h3>
+        <input type="text" id="aut">
+        <h3>Publication Year</h3>
+        <input type="number" id="pub">
+        <h3>Category</h3>
+        <input type="text" id="cat">
+    `
+        document.getElementById("tit").value=book['title'];
+        document.getElementById("aut").value=book['author'];
+        document.getElementById("pub").value=book['pubYear'];
+        document.getElementById("cat").value=book['category'];
+}
+
+async function saveBook(id){
+    title=document.getElementById("tit").value;
+    author=document.getElementById("aut").value;
+    pubyear=document.getElementById("pub").value;
+    category=document.getElementById("cat").value;
+    if(
+        (pubyear==null||pubyear==0||pubyear=="")||
+        (category==null||category=="")||
+        (author==null||author=="")||
+        (title==null||title=="")
+    ){
+        alert("No field can be empty");
+        return;
+    }
+    let editedBook={
+        'id':Number(id),
+        'title':title,
+        'author':author,
+        'pubYear':Number(pubyear),
+        'category':category
+    };
+    //console.log(editedBook.pubYear,typeof(editedBook.pubYear),editedBook.id,typeof(editedBook.id));
+    let original= await getBook('id',id);
+    original=original[0];
+    if(!(
+        original["title"]==editedBook["title"]&&
+        original["author"]==editedBook["author"]&&
+        original["pubYear"]==editedBook["pubYear"]&&
+        original["category"]==editedBook["category"]
+    )){
+        await fetch(`/library/Edit`,{
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(editedBook)
+        })
+    }
+    selectBook("id",id)
+}
+
 function selectBook(aspect,info){
     let Hhtml="";
     fetch(`/library/GetBook/${aspect}?query=${encodeURIComponent(info)}`)
     .then(response=>response.json())
     .then(data=>data.forEach(book=>{
-        console.log(
-            book['title'],
-            book['id'],
-            book['available'],
-            book['pubYear'],
-            book['categor']
-        )
         let a="Not Available";
         if(book.available==1){
             a="available";
         }
-        if(userType="manager"){
-            Hhtml=`<button onclick="editBook()">Edit</button>`
+        if(userType=="manager"){
+            Hhtml=`<button id="edit" onclick="editBook(${book.id})">Edit</button><button id="cancel" onclick="deleteBook(${book.id})">Delete</button>`
         }
         let bookshelf=document.getElementById("bookSearch");
         bookshelf.innerHTML=`
         <div class="inspector">
             <div id="description">
-                <h2>${book.id} - ${book.title}</h2>
-                <h3>${book.author} - ${book.pubYear}</h3>
-                <h3>${book.category}</h3>
-                <p>${a}</p>
+                <h2 id="I"># ${book.id} </h2>
+                <h2 id="T">"${book.title}"</h2>
+                <h3 id="AY">by: '${book.author}' in <span id="PY">${book.pubYear}</span></h3>
+                <h3 id="C">${book.category}</h3>
+                <h4>• ${a}</h4>
             </div>
             ${Hhtml}
-            <button onclick="Select('close')">X</button>
+            <button id="close" onclick="Select('close')">X</button>
             <img src="imgs/default.jpg" alt="">
         </div>
         `;
@@ -87,6 +156,7 @@ function Select(a){
     }else if(a=="close"){
         bookSearch.setAttribute("hidden","");
         bookshelf.forEach(book=>book.removeAttribute("hidden"));
+        loaded();
     }else{
         console.log("Error: Unknown method to 'select' at function 'Select(a)'")
         return;
@@ -117,7 +187,7 @@ function clearSearch(){
     allBooks();
 }
 
-function search(){
+async function search(){
     Select("close");
     let type=document.getElementById("filterType").value;
     let info=document.getElementById("searchBar").value;
@@ -150,5 +220,6 @@ function search(){
             alert("Stop messing around");
         return;
     }
-    getBook(type,info);
+    let book=await getBook(type,info)
+    showBooks(book);
 }

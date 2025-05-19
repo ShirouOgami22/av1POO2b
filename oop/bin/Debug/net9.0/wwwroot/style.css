@@ -160,19 +160,54 @@ label, #av{
     background-color: darkgrey;
     position: relative;
 }
-.inspector button{
+.inspector #close{
     position: absolute;
     cursor:pointer;
     border-radius: 3px;
     background-color: lightcoral;
     margin-left: 96%;
+    font-size: 20px;
+}
+.inspector #edit{
+    position: absolute;
+    cursor:pointer;
+    border-radius: 3px;
+    background-color: lightyellow;
+    margin-left: 93%;
+    margin-top: 47%;
+    font-size: 20px;
+}
+.inspector #cancel{
+    
+    position: absolute;
+    cursor:pointer;
+    border-radius: 3px;
+    background-color: lightcoral;
+    margin-left: 85%;
+    margin-top: 47%;
+    font-size: 20px;
 }
 .inspector #description{
     position: absolute;
     margin-left: 52%;
 }
+.inspector #description h3{
+    line-break: strict;
+}
 .inspector h2{
     font-size: 30px;
+}
+.inspector input{
+    border-radius: 3px;
+    background-color: antiquewhite;
+}
+#tit{
+    font-size: 30px;
+}
+#aut, #pub, #cat{
+    margin-top: 5px;
+    font-size: 20px;
+    
 }
 .inspector h3{
     font-size: 18px;

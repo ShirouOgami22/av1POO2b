@@ -67,7 +67,7 @@
         }
     </style>
     <script>
-        function submit(){
+        async function submit(){    
             let psP= document.getElementById("psP");
             let usP= document.getElementById("usP");
             let usr= document.getElementById("name").value;
@@ -97,9 +97,7 @@
             fetch(`/library/LogIn?query=${encodeURIComponent(usr)};${encodeURIComponent(pas)}`)
                 .then(response=>{if(!response.ok){
                     usP.innerText="Invalid username or password";
-                    return response.text().then(err => {
-                        console.log(err);
-                    });
+                    return response.text().then(err => {console.log(err);});
                 }
                 window.location.href=response.url;
             }).catch(err=>{console.log(err)});
