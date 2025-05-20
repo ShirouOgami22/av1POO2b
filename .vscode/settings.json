@@ -1,0 +1,7 @@
+{
+	"[csharp]":  {
+		"editor.maxTokenizationLineLength": 2500,
+		"editor.formatOnType": false,
+		"editor.inlineSuggest.suppressSuggestions": false
+	},
+}

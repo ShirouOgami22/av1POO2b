@@ -116,7 +116,58 @@ async function saveBook(id){
     selectBook("id",id)
 }
 
+function createBook(){//fix and improve
+    Select("open");
+    let cancelButton=document.getElementById("cancel");
+    let editButton=document.getElementById("edit");
+    editButton.setAttribute("onclick",`sendBook()`);
+    editButton.innerText="Create";
+    cancelButton.innerText="Cancel";
+    cancelButton.removeAttribute("hidden");
+    document.getElementById("description").innerHTML=`
+        <h2 id="ide"># New Book #}</h2>
+        <h3>Title</h3>
+        <input type="text" id="tit">
+        <h3>Author</h3>
+        <input type="text" id="aut">
+        <h3>Publication Year</h3>
+        <input type="number" id="pub">
+        <h3>Category</h3>
+        <input type="text" id="cat">
+    `
+}
+async function sendBook(){
+        let book={
+            'title':title,
+            'author':author,
+            'pubYear':Number(pubyear),
+            'category':category
+        };
+        let tit=document.getElementById("tit").value;
+        let aut=document.getElementById("aut").value;
+        let pub=document.getElementById("pub").value;
+        let cat=document.getElementById("cat").value;
+        if(
+            (tit==null||tit=="")||
+            (aut==null||aut=="")||
+            (pub==null||pub==0)||
+            (cat==null||cat=="")
+        ){return;}
+        tit=book['title'];
+        aut=book['author'];
+        pub=book['pubYear'];
+        cat=book['category'];
+        await fetch(`/library/Create/book`,{
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(book)
+        })
+}
 function selectBook(aspect,info){
+    if(aspect==null||info==null){
+        
+        return;
+    }
     let Hhtml="";
     fetch(`/library/GetBook/${aspect}?query=${encodeURIComponent(info)}`)
     .then(response=>response.json())

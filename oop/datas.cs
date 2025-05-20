@@ -200,8 +200,23 @@ namespace Datas{
         //    }
         //}
 
-        public void create(string what){
-
+        public void create(string what,string title,string author,int pubyear,string category){
+            if(!checkTableCols(what)){
+                return;
+            }
+            if(
+                isNull(title)||
+                isNull(author)||
+                pubyear==null||
+                isNull(category)
+            ){return;}
+            try{using(var cmd=new MySqlCommand($"insert into @what(author,title,pubYear,category) values (@A,@T,@P,@C); ",_db)){
+                cmd.Parameters.AddWithValue("T",title);
+                cmd.Parameters.AddWithValue("A",author);
+                cmd.Parameters.AddWithValue("P",pubYear);
+                cmd.Parameters.AddWithValue("C",category);
+                cmd.ExecuteNonQuery();
+            }}catch{return;}
         }
         public void editBook(int? id,string title,string author,int? pubYear,string category){
         

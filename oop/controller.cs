@@ -43,8 +43,15 @@ namespace Controller{
         }
 
         [HttpGet("Create/{what}")]
-        public IActionResult create(string what,[FromQuery] object data){
+        public IActionResult create(string what,[FromBody] JsonElement body){
             if(permissions=="manager"){
+                if(what == "book"){
+                    var title = body.GetProperty("title").GetString();
+                    var author = body.GetProperty("author").GetString();
+                    var pubyear = body.GetProperty("pubYear").GetInt32();
+                    var category = body.GetProperty("category").GetString();
+                    db.create(what,title,author,pubyear,category);
+                }
                 return Ok();
             }else{
                 return BadRequest("Youre not a manager...");
