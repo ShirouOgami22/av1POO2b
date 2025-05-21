@@ -34,7 +34,11 @@ function showBooks(data){
 async function allBooks(){
     await fetch(`/library/Count`).then(response=>response.text()).then(response=>
         document.getElementById("totalBooks").innerText=`There are ${response} books in the library`);
-    await fetch(`/library/ListBooks/all`).then(response=>response.json()).then(response=>showBooks(response));
+   try{
+        await fetch(`/library/ListBooks/all`).then(response=>response.json()).then(response=>showBooks(response));
+   }catch{
+        showBooks(null);
+   }
     
 }
 
@@ -55,7 +59,7 @@ async function editBook(id){
     let cancelButton=document.getElementById("cancel");
     let editButton=document.getElementById("edit");
     
-    editButton.setAttribute("onclick",`saveBook(${id})`);
+    editButton.setAttribute("onclick",`saveBook(${id},"edit")`);
     editButton.innerText="Save";
     cancelButton.innerText="Cancel";
     cancelButton.removeAttribute("hidden");
@@ -76,8 +80,31 @@ async function editBook(id){
         document.getElementById("pub").value=book['pubYear'];
         document.getElementById("cat").value=book['category'];
 }
+async function createBook(){
+    Select("open");
+    //let book=await getBook("id",id);
+    //book=book[0];
+    let cancelButton=document.getElementById("cancel");
+    let editButton=document.getElementById("edit");
+    editButton.setAttribute("onclick",`saveBook(0,"create")`);
+    editButton.innerText="Save";
+    cancelButton.innerText="Cancel";
+    cancelButton.removeAttribute("hidden");
+    cancelButton.setAttribute("onclick",`Select('close')`);
+    document.getElementById("description").innerHTML=`
+        <h2># New Book #</h2>
+        <h3>Title</h3>
+        <input type="text" id="tit">
+        <h3>Author</h3>
+        <input type="text" id="aut">
+        <h3>Publication Year</h3>
+        <input type="number" id="pub">
+        <h3>Category</h3>
+        <input type="text" id="cat">
+    `
+}
 
-async function saveBook(id){
+async function saveBook(id,method){
     title=document.getElementById("tit").value;
     author=document.getElementById("aut").value;
     pubyear=document.getElementById("pub").value;
@@ -98,72 +125,39 @@ async function saveBook(id){
         'pubYear':Number(pubyear),
         'category':category
     };
-    //console.log(editedBook.pubYear,typeof(editedBook.pubYear),editedBook.id,typeof(editedBook.id));
-    let original= await getBook('id',id);
-    original=original[0];
-    if(!(
-        original["title"]==editedBook["title"]&&
-        original["author"]==editedBook["author"]&&
-        original["pubYear"]==editedBook["pubYear"]&&
-        original["category"]==editedBook["category"]
-    )){
-        await fetch(`/library/Edit`,{
+    //aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    if(method=="edit"&&id>0){
+        let original= await getBook('id',id);
+        original=original[0];
+        if(!(
+            original["title"]==editedBook["title"]&&
+            original["author"]==editedBook["author"]&&
+            original["pubYear"]==editedBook["pubYear"]&&
+            original["category"]==editedBook["category"]
+        )){
+            await fetch(`/library/Edit`,{
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(editedBook)
+            })
+        }
+        selectBook("id",id);
+        return;
+    }else if(method=="create"||id<=0){
+        await fetch(`/library/Create/book`,{
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(editedBook)
         })
+        Select("close");
+        return;
+    }else{
+        console.log("Invalid method in saveBook()")
+        return;
     }
-    selectBook("id",id)
-}
-
-function createBook(){//fix and improve
-    Select("open");
-    let cancelButton=document.getElementById("cancel");
-    let editButton=document.getElementById("edit");
-    editButton.setAttribute("onclick",`sendBook()`);
-    editButton.innerText="Create";
-    cancelButton.innerText="Cancel";
-    cancelButton.removeAttribute("hidden");
-    document.getElementById("description").innerHTML=`
-        <h2 id="ide"># New Book #}</h2>
-        <h3>Title</h3>
-        <input type="text" id="tit">
-        <h3>Author</h3>
-        <input type="text" id="aut">
-        <h3>Publication Year</h3>
-        <input type="number" id="pub">
-        <h3>Category</h3>
-        <input type="text" id="cat">
-    `
-}
-async function sendBook(){
-        let book={
-            'title':title,
-            'author':author,
-            'pubYear':Number(pubyear),
-            'category':category
-        };
-        let tit=document.getElementById("tit").value;
-        let aut=document.getElementById("aut").value;
-        let pub=document.getElementById("pub").value;
-        let cat=document.getElementById("cat").value;
-        if(
-            (tit==null||tit=="")||
-            (aut==null||aut=="")||
-            (pub==null||pub==0)||
-            (cat==null||cat=="")
-        ){return;}
-        tit=book['title'];
-        aut=book['author'];
-        pub=book['pubYear'];
-        cat=book['category'];
-        await fetch(`/library/Create/book`,{
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(book)
-        })
 }
 function selectBook(aspect,info){
+    Select("open");
     if(aspect==null||info==null){
         
         return;
@@ -194,11 +188,26 @@ function selectBook(aspect,info){
             <img src="imgs/default.jpg" alt="">
         </div>
         `;
-        Select("open");
     }))
 }
 
 function Select(a){
+    let bok=document.getElementById("bookSearch");
+        bok.innerHTML=`
+        <div class="inspector">
+            <div id="description">
+                <h2 id="I"># <book id> </h2>
+                <h2 id="T"><book title></h2>
+                <h3 id="AY">by: <book author> in <span id="PY"><books pub. year></span></h3>
+                <h3 id="C"><book category></h3>
+                <h4>• <is book available></h4>
+            </div>
+            <button id="edit">Edit</button>
+            <button id="cancel">Delete</button>
+            <button id="close" onclick="Select('close')">X</button>
+            <img src="imgs/default.jpg" alt="">
+        </div>
+        `;
     let bookshelf=document.getElementById("bookShelf").querySelectorAll("div");
     let bookSearch=document.getElementById("bookSearch");
     if(a=="open"){
@@ -207,7 +216,8 @@ function Select(a){
     }else if(a=="close"){
         bookSearch.setAttribute("hidden","");
         bookshelf.forEach(book=>book.removeAttribute("hidden"));
-        loaded();
+        //right here, when selector is closed i need to update the books...
+        //loaded() breaks...
     }else{
         console.log("Error: Unknown method to 'select' at function 'Select(a)'")
         return;

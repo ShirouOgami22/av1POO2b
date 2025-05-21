@@ -62,10 +62,10 @@ namespace Datas{
     }
 
         public bool checkTableCols(string columnName,string table=@"book"){
-            using (var command = new MySqlCommand($"select column_name from information_schema.columns where table_name = @table and column_name = @columnName", _db)){
+            using(var command = new MySqlCommand($"select column_name from information_schema.columns where table_name = @table and column_name = @columnName", _db)){
             command.Parameters.AddWithValue("@table", table);
             command.Parameters.AddWithValue("@columnName", columnName);
-            using (var reader = command.ExecuteReader()){
+            using(var reader = command.ExecuteReader()){
                 while (reader.Read()){
                     for(int i=0;i<count;i++){
                     string currentColumn = reader.GetValue(i).ToString()!;
@@ -200,7 +200,7 @@ namespace Datas{
         //    }
         //}
 
-        public void create(string what,string title,string author,int pubyear,string category){
+        public void create(string what,string title,string author,int? pubyear,string category){
             if(!checkTableCols(what)){
                 return;
             }
@@ -213,7 +213,7 @@ namespace Datas{
             try{using(var cmd=new MySqlCommand($"insert into @what(author,title,pubYear,category) values (@A,@T,@P,@C); ",_db)){
                 cmd.Parameters.AddWithValue("T",title);
                 cmd.Parameters.AddWithValue("A",author);
-                cmd.Parameters.AddWithValue("P",pubYear);
+                cmd.Parameters.AddWithValue("P",pubyear);
                 cmd.Parameters.AddWithValue("C",category);
                 cmd.ExecuteNonQuery();
             }}catch{return;}

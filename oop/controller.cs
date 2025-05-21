@@ -42,7 +42,7 @@ namespace Controller{
             return Ok(db.querry(aspect,query));
         }
 
-        [HttpGet("Create/{what}")]
+        [HttpPost("Create/{what}")]
         public IActionResult create(string what,[FromBody] JsonElement body){
             if(permissions=="manager"){
                 if(what == "book"){
@@ -50,7 +50,7 @@ namespace Controller{
                     var author = body.GetProperty("author").GetString();
                     var pubyear = body.GetProperty("pubYear").GetInt32();
                     var category = body.GetProperty("category").GetString();
-                    db.create(what,title,author,pubyear,category);
+                    db.create(what,title!,author!,pubyear!,category!);
                 }
                 return Ok();
             }else{
