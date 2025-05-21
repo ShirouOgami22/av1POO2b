@@ -19,10 +19,10 @@ function showBooks(data){
        bookshelf.innerHTML="";
        data.forEach(book => {
            bookshelf.innerHTML+=`
-           <div id="book${book.id}" class="bookShow">
+           <div onclick='selectBook("title","${book.title}")' id="book${book.id}" class="bookShow">
                <img src="imgs/default.jpg" alt="bookImage">
                <div class="description">
-                 <a onclick='selectBook("title","${book.title}")' class="title">${book.title}</a>
+                 <a class="title">${book.title}</a>
                  <p>${book.author}<br>${book.pubYear}</p>
                </div>
              </div>
@@ -46,14 +46,14 @@ async function deleteBook(id){
     let target=await getBook("id",id);
     target=target[0];
     if(confirm(`do you really wish to delete the book:\n"${target.title}"\nthis action is irreversible!`)){
-        Select("close");
+        await Select("close");
         fetch(`/library/rmBook?query=${encodeURIComponent(target.id)}`)//work on response
     }
     document.getElementById(`book${id}`).remove();
 }
 
 async function editBook(id){
-    Select("open");
+    await Select("open");
     let book=await getBook("id",id);
     book=book[0];
     let cancelButton=document.getElementById("cancel");
@@ -81,16 +81,12 @@ async function editBook(id){
         document.getElementById("cat").value=book['category'];
 }
 async function createBook(){
-    Select("open");
+    await Select("open");
     //let book=await getBook("id",id);
     //book=book[0];
-    let cancelButton=document.getElementById("cancel");
     let editButton=document.getElementById("edit");
     editButton.setAttribute("onclick",`saveBook(0,"create")`);
     editButton.innerText="Save";
-    cancelButton.innerText="Cancel";
-    cancelButton.removeAttribute("hidden");
-    cancelButton.setAttribute("onclick",`Select('close')`);
     document.getElementById("description").innerHTML=`
         <h2># New Book #</h2>
         <h3>Title</h3>
@@ -149,15 +145,15 @@ async function saveBook(id,method){
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(editedBook)
         })
-        Select("close");
+        await Select("close");
         return;
     }else{
         console.log("Invalid method in saveBook()")
         return;
     }
 }
-function selectBook(aspect,info){
-    Select("open");
+async function selectBook(aspect,info){
+    await Select("open");
     if(aspect==null||info==null){
         
         return;
@@ -177,9 +173,9 @@ function selectBook(aspect,info){
         bookshelf.innerHTML=`
         <div class="inspector">
             <div id="description">
-                <h2 id="I"># ${book.id} </h2>
-                <h2 id="T">"${book.title}"</h2>
-                <h3 id="AY">by: '${book.author}' in <span id="PY">${book.pubYear}</span></h3>
+                <h2 id="I"># <span>${book.id}</span> </h2>
+                <h2 id="T">"<span>${book.title}</span>"</h2>
+                <h3 id="AY">by: '<span>${book.author}</span>' in <span id="PY">${book.pubYear}</span></h3>
                 <h3 id="C">${book.category}</h3>
                 <h4>• ${a}</h4>
             </div>
@@ -191,7 +187,7 @@ function selectBook(aspect,info){
     }))
 }
 
-function Select(a){
+async function Select(a){
     let bok=document.getElementById("bookSearch");
         bok.innerHTML=`
         <div class="inspector">
@@ -203,11 +199,11 @@ function Select(a){
                 <h4>• <is book available></h4>
             </div>
             <button id="edit">Edit</button>
-            <button id="cancel">Delete</button>
-            <button id="close" onclick="Select('close')">X</button>
+            <button id="close" onclick="await Select('close')">X</button>
             <img src="imgs/default.jpg" alt="">
         </div>
         `;
+        //<button id="cancel">Delete</button>
     let bookshelf=document.getElementById("bookShelf").querySelectorAll("div");
     let bookSearch=document.getElementById("bookSearch");
     if(a=="open"){
@@ -242,14 +238,14 @@ function update(){
     }
 }
 
-function clearSearch(){
+async function clearSearch(){
     document.getElementById("searchBar").value="";
-    Select("close");
+    await Select("close");
     allBooks();
 }
 
 async function search(){
-    Select("close");
+    await Select("close");
     let type=document.getElementById("filterType").value;
     let info=document.getElementById("searchBar").value;
     switch(type){

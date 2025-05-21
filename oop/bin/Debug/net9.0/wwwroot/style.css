@@ -13,6 +13,9 @@ h1{
     width: 90%;
     margin-left: -1%;
 }
+span{
+    user-select:text;
+}
 #nO{
     position: absolute;
     margin-left: 41%;
@@ -121,6 +124,8 @@ label, #av{
     padding: 5px;
     border-radius:5px;
     position: relative;
+
+    cursor: pointer;
 }
 .bookShow img{
     border-radius:5px;
@@ -138,7 +143,7 @@ label, #av{
     color: black;
     margin-top: -1%;
     margin-left: 2%;
-    word-break: break-all;
+    word-break:normal;
     font-size: 15px;
 }
 .bookShow a{

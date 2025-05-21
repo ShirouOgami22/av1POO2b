@@ -201,7 +201,8 @@ namespace Datas{
         //}
 
         public void create(string what,string title,string author,int? pubyear,string category){
-            if(!checkTableCols(what)){
+            if(!checkTableCols("id",what)){
+                print($"table {what} doesnt exist");
                 return;
             }
             if(
@@ -209,14 +210,16 @@ namespace Datas{
                 isNull(author)||
                 pubyear==null||
                 isNull(category)
-            ){return;}
-            try{using(var cmd=new MySqlCommand($"insert into @what(author,title,pubYear,category) values (@A,@T,@P,@C); ",_db)){
+            ){print($"some field is null");return;}
+            try{using(var cmd=new MySqlCommand($"insert into {what}(author,title,pubYear,category) values (@A,@T,@P,@C); ",_db)){
                 cmd.Parameters.AddWithValue("T",title);
                 cmd.Parameters.AddWithValue("A",author);
                 cmd.Parameters.AddWithValue("P",pubyear);
                 cmd.Parameters.AddWithValue("C",category);
+                //cmd.Parameters.AddWithValue("what",what);
+                //uhh, tho its unsafe, i guess the easiest way is to directly insert 'what' into the command
                 cmd.ExecuteNonQuery();
-            }}catch{return;}
+            }}catch(Exception err){print($"some error happened: {err}");return;}
         }
         public void editBook(int? id,string title,string author,int? pubYear,string category){
         
