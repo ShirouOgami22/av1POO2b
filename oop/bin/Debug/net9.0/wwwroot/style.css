@@ -39,12 +39,11 @@ span{
     margin-right:5px ;
     position: relative;
 }
-
 #searchButton{
     color: black;
     height: 27px;
     font-size: 18px;
-    background-color: aquamarine;
+    background-color:lightblue  ;
     cursor: pointer;
     margin-left: 2px;
     border-radius: 4px;
@@ -72,10 +71,11 @@ label, #av{
 
 #clearButton{
     color: black;
-    background-color: lightblue;
+    background-color: lightsalmon;
     cursor: pointer;
     margin-left: 4%;
     border-radius: 4px;
+    font-size: 15px;
 }
 #searchDiv #extraSearch{
     margin-left: 5%;
@@ -85,7 +85,7 @@ label, #av{
     border-radius: 4px;
     border: 2px solid black;
     font-size: 18px;
-    width: 70%;
+    width: 65%;
 }
 #menuDiv{
     margin-left: 2%;
@@ -93,7 +93,14 @@ label, #av{
     color: black;
 }
 
-
+#createBok{
+    color: black;
+    background-color:lightgreen;
+    cursor: pointer;
+    margin-left: 4%;
+    border-radius: 4px;
+    font-size: 15px;
+}
 /*!--side--!*/
 
 
@@ -120,7 +127,7 @@ label, #av{
     height: 350px;
     max-height: 350px;
     width: 200px;
-    max-width: 200px;
+    max-width: 190px;
     padding: 5px;
     border-radius:5px;
     position: relative;
@@ -131,7 +138,7 @@ label, #av{
     border-radius:5px;
     margin-bottom: 50px;
     max-height: 250px;
-    max-width: 200px;
+    max-width: 190px;
 }
 .bookShow .description{
     position: absolute;
@@ -170,7 +177,7 @@ label, #av{
     cursor:pointer;
     border-radius: 3px;
     background-color: lightcoral;
-    margin-left: 96%;
+    margin-left: 95%;
     font-size: 20px;
 }
 .inspector #edit{
@@ -178,18 +185,17 @@ label, #av{
     cursor:pointer;
     border-radius: 3px;
     background-color: lightyellow;
-    margin-left: 92%;
-    margin-top: 47%;
+    margin-left: 91%;
+    margin-top: 46%;
     font-size: 20px;
 }
 .inspector #cancel{
-    
     position: absolute;
     cursor:pointer;
     border-radius: 3px;
     background-color: lightcoral;
-    margin-left: 83%;
-    margin-top: 47%;
+    margin-left: 81%;
+    margin-top: 46%;
     font-size: 20px;
 }
 .inspector #description{
@@ -198,6 +204,9 @@ label, #av{
 }
 .inspector #description h3{
     line-break: strict;
+}
+.inspector h3{
+    margin: 10px;
 }
 .inspector h2{
     font-size: 30px;

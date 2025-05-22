@@ -2,7 +2,29 @@ let userType=null;
 async function loaded(){
     await allBooks();
     fetch(`/library/UserCreds`).then(back=>back.text())
-    .then(creds=>userType=creds);
+    .then(creds=>{userType=creds;
+        if(userType=="manager"){
+        document.getElementsByTagName("aside")[0].innerHTML+=`
+            <button id="createBok" onclick="createBook()">Create book</button>
+        `
+    }
+    });
+    document.getElementById("bookSearch").innerHTML=`
+        <div class="inspector">
+            <div id="description">
+                <h2 id="I"># <book id> </h2>
+                <h2 id="T"><book title></h2>
+                <h3 id="AY">by: <book author> in <span id="PY"><books pub. year></span></h3>
+                <h3 id="C"><book category></h3>
+                <h4>• <is book available></h4>
+            </div>
+            <button id="edit">Edit</button>
+            <button id="cancel">Delete</button>
+            <button id="close" onclick="Select('close')">X</button>
+            <img src="imgs/default.jpg" alt="">
+        </div>
+        `;
+    
 }
 async function getBook(method,query){
     return fetch(`/library/GetBook/${method}?query=${encodeURIComponent(query)}`)
@@ -85,6 +107,12 @@ async function createBook(){
     //let book=await getBook("id",id);
     //book=book[0];
     let editButton=document.getElementById("edit");
+    let cancelButton=document.getElementById("cancel");
+    
+    cancelButton.innerText="Cancel";
+    cancelButton.removeAttribute("hidden");
+    cancelButton.setAttribute("onclick",`Select("close")`);
+
     editButton.setAttribute("onclick",`saveBook(0,"create")`);
     editButton.innerText="Save";
     document.getElementById("description").innerHTML=`
@@ -188,21 +216,6 @@ async function selectBook(aspect,info){
 }
 
 async function Select(a){
-    let bok=document.getElementById("bookSearch");
-        bok.innerHTML=`
-        <div class="inspector">
-            <div id="description">
-                <h2 id="I"># <book id> </h2>
-                <h2 id="T"><book title></h2>
-                <h3 id="AY">by: <book author> in <span id="PY"><books pub. year></span></h3>
-                <h3 id="C"><book category></h3>
-                <h4>• <is book available></h4>
-            </div>
-            <button id="edit">Edit</button>
-            <button id="close" onclick="await Select('close')">X</button>
-            <img src="imgs/default.jpg" alt="">
-        </div>
-        `;
         //<button id="cancel">Delete</button>
     let bookshelf=document.getElementById("bookShelf").querySelectorAll("div");
     let bookSearch=document.getElementById("bookSearch");
