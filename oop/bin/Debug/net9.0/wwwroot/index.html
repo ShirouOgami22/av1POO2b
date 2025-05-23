@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="cogs.js"></script>
 </head>
-<body onkeydown="if(event.key==='Escape')Select('close');" onload="loaded()"><!---->
+<body onkeydown="if(event.key==='Escape')Select('close');" onload="load()"><!---->
 <center><h1>Library!</h1></center>
     <div id="mainPage">
         <aside onclick="update()">
@@ -50,27 +50,6 @@
         <main>
             <center><h1 id="mainTitle">Library content</h1></center><br>
             <div id="bookShelf">
-              <!--
-                <div class="bookShow">
-                  <img src="" alt="">
-                  <div id="description">
-                    <a href="thisBooksPageLink?" id="title">Book title placeholder!</a>
-                    <p>author placeholder<br>year too</p>
-                  </div>
-                </div>
-              -->
-
-              <!--
-                <div class="inspector">
-                  <div id="description">
-                    <h2>id - title</h2>
-                    <h3>author - pubyear</h3>
-                    <h3>category</h3>
-                    <p>Available or not</p>
-                  </div>
-                  <img src="imgs/default.jpg" alt="">
-                </div>
-              -->
             </div>
             <div hidden class="bookShelf" id="bookSearch">
             </div>
