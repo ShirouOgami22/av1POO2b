@@ -5,7 +5,8 @@ async function loaded(){
     .then(creds=>{userType=creds;
         if(userType=="manager"){
         document.getElementsByTagName("aside")[0].innerHTML+=`
-            <button id="createBok" onclick="createBook()">Create book</button>
+            <button id="create" onclick="createBook()">Create book</button>
+            <button id="manageUsr" onclick="manageUsers()">Manage users</button>
         `
     }
     });
@@ -26,6 +27,7 @@ async function loaded(){
         `;
     
 }
+
 async function getBook(method,query){
     return fetch(`/library/GetBook/${method}?query=${encodeURIComponent(query)}`)
     .then(response=>response.json())
@@ -38,18 +40,18 @@ function showBooks(data){
     if(data==null||data==0||data.length==0){
         bookshelf.innerHTML=`<center><h2 id="nO">No books found<br>Did you type it right?</h2></center>`;
     }else{
-       bookshelf.innerHTML="";
-       data.forEach(book => {
-           bookshelf.innerHTML+=`
-           <div onclick='selectBook("title","${book.title}")' id="book${book.id}" class="bookShow">
-               <img src="imgs/default.jpg" alt="bookImage">
-               <div class="description">
-                 <a class="title">${book.title}</a>
-                 <p>${book.author}<br>${book.pubYear}</p>
-               </div>
-             </div>
-           `
-       });
+        bookshelf.innerHTML="";
+        data.forEach(book => {
+            bookshelf.innerHTML+=`
+            <div onclick='selectBook("id","${book.id}")' id="book${book.id}" class="bookShow">
+                <img src="imgs/default.jpg" alt="bookImage">
+                <div class="description">
+                  <a class="title">${book.title}</a>
+                  <p>${book.author}<br>${book.pubYear}</p>
+                </div>
+              </div>
+            `
+        });
     }
 }
 
@@ -102,6 +104,7 @@ async function editBook(id){
         document.getElementById("pub").value=book['pubYear'];
         document.getElementById("cat").value=book['category'];
 }
+
 async function createBook(){
     await Select("open");
     //let book=await getBook("id",id);
@@ -180,6 +183,46 @@ async function saveBook(id,method){
         return;
     }
 }
+
+async function manageUsers(){
+    Select("close")
+    document.getElementById("searchDiv").setAttribute("hidden","");
+    document.getElementById("menuDiv").setAttribute("hidden","");
+    
+    document.getElementById("create").innerText="Create user";
+    document.getElementById("create").setAttribute("onclick","newUser()");
+    document.getElementById("manageUsr").setAttribute("onclick","clearSearch()");
+    document.getElementById("manageUsr").innerText="Show books";
+    let bookshelf=document.getElementById("bookShelf");
+    await fetch(`library/getUsers/all`).then(response=>response.json()).then(data=>{
+            if(data==null||data==0||data.length==0){
+                bookshelf.innerHTML=`<center><h2 id="nO">No users?<br>Maybe an error?</h2></center>`;
+            }else{
+               bookshelf.innerHTML="";
+               data.forEach(user => {
+                    let idk=user.role
+                    let eh="";
+                    if(user.role=="manager"){
+                        idk=`<span>${user.role}</span>`
+                    }else{
+                        eh=`<button id="rmUser" onclick="removeUser(${user.id})">delete</button>`
+                    }
+                    bookshelf.innerHTML+=`
+                    <div id="user${user.id}" class="userShow">
+                         <h2>#${user.id}</h2>
+                         <img src="imgs/user.jpg" alt="user image">
+                         <div class="Uinfo">
+                         <h2 class="name">${user.name}</h2>
+                         <p>- ${idk}</p>
+                         ${eh}
+                        </div>
+                      </div>
+                    `
+               });
+            }        
+        })
+}
+
 async function selectBook(aspect,info){
     await Select("open");
     if(aspect==null||info==null){
@@ -252,6 +295,13 @@ function update(){
 }
 
 async function clearSearch(){
+    document.getElementById("searchDiv").removeAttribute("hidden");
+    document.getElementById("menuDiv").removeAttribute("hidden");
+    document.getElementById("bookShelf").innerHTML="";
+    document.getElementById("manageUsr").setAttribute("onclick","manageUsers()");
+    document.getElementById("manageUsr").innerText="Manage users";
+    document.getElementById("create").innerText="Create book";
+    document.getElementById("create").setAttribute("onclick","createbook()");
     document.getElementById("searchBar").value="";
     await Select("close");
     allBooks();

@@ -133,34 +133,53 @@ namespace Datas{
         return false;
     }
 
-        public object querry(string mode){
-        string comando;
-        if(mode=="all"){
-            comando="select * from book";
-        }else if(mode=="available"){
-            comando="select * from book where available=1";
-        }else if(mode=="unavailable"){
-            comando="select * from book where available=0";
-        }else{
-            print("Unknown mode");
-            return null!;
-        }
-        List<Dictionary<string,object>> results = new List<Dictionary<string,object>>();
-        using(var cmd = new MySqlCommand(comando,_db))
-            using(var reader = cmd.ExecuteReader()){
-                int count=reader.FieldCount;
-                if(!reader.HasRows){return null!;}
-                while(reader.Read()){
-                    var row = new Dictionary<string,object>();
-                    for (int e = 0; e < count; e++){
-                        row[reader.GetName(e)] = reader.GetValue(e);
-                    }
-                    results.Add(row);
-                }
+        public object? querry(string mode){
+            string comando;
+            if(mode=="all"){
+                comando="select * from book";
+            }else if(mode=="available"){
+                comando="select * from book where available=1";
+            }else if(mode=="unavailable"){
+                comando="select * from book where available=0";
+            }else{
+                print("Unknown mode");
+                return null!;
             }
-        return results;
-    }
-
+            List<Dictionary<string,object>> results = new List<Dictionary<string,object>>();
+            using(var cmd = new MySqlCommand(comando,_db))
+                using(var reader = cmd.ExecuteReader()){
+                    int count=reader.FieldCount;
+                    if(!reader.HasRows){return null!;}
+                    while(reader.Read()){
+                        var row = new Dictionary<string,object>();
+                        for (int e = 0; e < count; e++){
+                            row[reader.GetName(e)] = reader.GetValue(e);
+                        }
+                        results.Add(row);
+                    }
+                }
+            return results;
+       }
+    
+        public object? querryUsers(string mode){
+            if(mode!="all"){
+                return null;
+            }
+                List<Dictionary<string,object>> results = new List<Dictionary<string,object>>();
+                using(var cmd = new MySqlCommand("select * from `user`",_db))
+                    using(var reader = cmd.ExecuteReader()){
+                        int count=reader.FieldCount;
+                        if(!reader.HasRows){return null!;}
+                        while(reader.Read()){
+                            var row = new Dictionary<string,object>();
+                            for (int e = 0; e < count; e++){
+                                row[reader.GetName(e)] = reader.GetValue(e);
+                            }
+                            results.Add(row);
+                        }
+                    }
+                return results;
+            }
         public object querry(string method,object content){
         if(!checkTableCols(method)){
             print("Unknown method");
@@ -186,20 +205,6 @@ namespace Datas{
         }   
     }
 
-            //public boolean queryUser(string user){
-        //    using(var cmd = new MySqlCommand("select name from user",_db)){
-        //        using(var reader = cmd.ExecuteReader()){
-        //            int counter=reader.FieldCount;
-        //            while(reader.Read()){
-        //                if(reader.GetValue(0) == user){
-        //                    return true;
-        //                }
-        //            }
-        //            return null;
-        //        }    
-        //    }
-        //}
-
         public void create(string what,string title,string author,int? pubyear,string category){
             if(!checkTableCols("id",what)){
                 print($"table {what} doesnt exist");
@@ -221,6 +226,7 @@ namespace Datas{
                 cmd.ExecuteNonQuery();
             }}catch(Exception err){print($"some error happened: {err}");return;}
         }
+
         public void editBook(int? id,string title,string author,int? pubYear,string category){
         
         try{using(var cmd=new MySqlCommand($"UPDATE book set title=@T,author=@A,pubYear=@P,category=@C where id={id}",_db)){
@@ -231,6 +237,7 @@ namespace Datas{
                 cmd.ExecuteNonQuery();
             }}catch{return;}
         }
+
         public void remove(int id){
             using(var cmd = new MySqlCommand("delete from book where id=@id",_db)){
                 cmd.Parameters.AddWithValue("id",id);

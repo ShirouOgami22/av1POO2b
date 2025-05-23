@@ -15,7 +15,7 @@ namespace Controller{
                 db.remove(Convert.ToInt32(query));
                 return Ok($"Deleted book ${query}");
             }
-            return BadRequest("You dont have the right permissions to do this");
+            return BadRequest("You dont have the right permission");
         }
 
         [HttpGet("UserCreds")]
@@ -36,7 +36,15 @@ namespace Controller{
         public IActionResult getAll(){
             return Ok(db.querry("all"));
         }
-
+        
+        [HttpGet("getUsers/all")]
+        public IActionResult getAusers(){
+            if(permissions!="manager"){
+                return BadRequest("You dont have the permission");
+            }
+            return Ok(db.querryUsers("all"));
+        }
+        
         [HttpGet("GetBook/{aspect}")]
         public IActionResult getBook(string aspect, [FromQuery] string query){
             return Ok(db.querry(aspect,query));

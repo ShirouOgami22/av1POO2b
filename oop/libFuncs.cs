@@ -88,7 +88,7 @@ namespace Library{
             }
         }
         public static void list(string a){
-            List<Dictionary<string,object>> book = (List<Dictionary<string,object>>)db.querry(a);
+            List<Dictionary<string,object>> book = (List<Dictionary<string,object>>)db.querry(a)!;
             if(book==null||book.Count == 0){
                 print("No books found");
                 return;
