@@ -45,23 +45,22 @@ static bool login(){
 
 }
 db.connect();
-
-    if(args.Length==0){
-        print("Please state whether you wish to manage the database with 'database' or start the program with 'library'\nYou may choose wheter to use a graphic user interface: 'noGUI' or 'GUI'");
-        print("'<program>.exe library nogui'");
+if(args.Length<=0){
+    print("Please state whether you wish to manage the database with 'database' or start the program with 'library'\nYou may choose wheter to use a graphic user interface: 'noGUI' or 'GUI'");
+    print("'<program>.exe library nogui'");
+}else{
+    if(args[0].ToLower()=="library" && args[1].ToLower()=="nogui"){
+        libraryNogui();
+    }else if(args[0].ToLower()=="library" && args[1].ToLower()=="gui"){
+        app.UseStaticFiles();
+        app.MapFallbackToFile("login/login.html");
+        app.MapControllers();
+        app.Run();
+    }else if(args[0].ToLower()=="database" && args[1].ToLower()=="nogui"){
+        login();
+    }else if(args[0].ToLower()=="database" && args[1].ToLower()=="gui"){
+        //
     }else{
-        if(args[0].ToLower()=="library" && args[1].ToLower()=="nogui"){
-            libraryNogui();
-        }else if(args[0].ToLower()=="library" && args[1].ToLower()=="gui"){
-            app.UseStaticFiles();
-            app.MapFallbackToFile("login/login.html");
-            app.MapControllers();
-            app.Run();
-        }else if(args[0].ToLower()=="database" && args[1].ToLower()=="nogui"){
-            login();
-        }else if(args[0].ToLower()=="database" && args[1].ToLower()=="gui"){
-            //
-        }else{
-            print("Unknown arguments\nexample of correct use:\n<program>.exe library nogui");
-        }
+        print("Unknown arguments\nexample of correct use:\n<program>.exe library nogui");
     }
+}
