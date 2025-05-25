@@ -5,7 +5,6 @@ using static Library.LibraryFuncs;
 using static extras.extraFucns; 
 using static libN.NoguiLibrary;
 using static vars.Thingyes;
-using static dbN.dbManager; 
 using static Datas.Idk;
 using Datas;
 
@@ -55,7 +54,7 @@ db.connect();
             libraryNogui();
         }else if(args[0].ToLower()=="library" && args[1].ToLower()=="gui"){
             app.UseStaticFiles();
-            app.MapFallbackToFile("login.html");
+            app.MapFallbackToFile("login/login.html");
             app.MapControllers();
             app.Run();
         }else if(args[0].ToLower()=="database" && args[1].ToLower()=="nogui"){

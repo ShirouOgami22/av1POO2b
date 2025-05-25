@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9">
+    <title>Library - Login</title>
+    <script src="cogsLogin.js"></script>
+    <link rel="stylesheet" href="styleLogin.css">
+</head>
+<body>
+    <div id="main">
+        <center>
+            <h1>Log in into library</h1>
+        </center>
+        <img src="../imgs/default.jpg" alt="Library idk... placeholder">
+        <div id="creds">
+            <h2 style="margin-top: 0;">Name</h2>
+            <input onkeydown="if(event.key==='Enter')submit();" type="text" id="name" placeholder="Type your name">
+            <p id="usP"></p>
+            <br>
+            <h2>Password</h2>
+            <input onkeydown="if(event.key==='Enter')submit();" type="password" id="password" placeholder="Type your password">
+            <p id="psP"></p>
+            <br>
+            <button id="sub" onclick="submit()">submit</button>
+        </div>
+    </div>
+</body>
+</html>

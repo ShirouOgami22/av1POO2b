@@ -33,8 +33,8 @@ namespace Controller{
         }
         
         [HttpGet("ListBooks/all")]
-        public IActionResult getAll(){
-            return Ok(db.querry("all"));
+        public IActionResult getAll([FromQuery] string method,[FromQuery] string order){
+            return Ok(db.querry("all",method,order));
         }
         
         [HttpGet("getUsers/all")]
@@ -46,8 +46,10 @@ namespace Controller{
         }
         
         [HttpGet("GetBook/{aspect}")]
-        public IActionResult getBook(string aspect, [FromQuery] string query){
-            return Ok(db.querry(aspect,query));
+        public IActionResult getBook(string aspect, [FromQuery] string query,[FromQuery] string? method,[FromQuery] string? order){
+            if(method==null||method==""){method="id";}
+            if(order==null||order==""){order="asc";}
+            return Ok(db.querry(aspect,query,method,order));
         }
 
         [HttpPost("Create/{what}")]
@@ -83,7 +85,7 @@ namespace Controller{
                 if(!(db.logIn(user)&&db.paswd(password,user))){
                     return BadRequest("Invalid Name or password");
                 }
-                return Redirect("/index.html");
+                return Redirect("/main/index.html");
         }
     }   
 }

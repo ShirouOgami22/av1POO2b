@@ -91,8 +91,8 @@ namespace Datas{
         }
         worker="";
         permissions="";
-        using(var cmd = new MySqlCommand($"select * from user where name = @a;",_db)){
-        cmd.Parameters.AddWithValue("@a", a);
+        using(var cmd = new MySqlCommand($"select * from user where name like @a;",_db)){
+        cmd.Parameters.AddWithValue("@a", $"%{a}%");
         using(var reader = cmd.ExecuteReader()){
             int found=reader.FieldCount;
             while (reader.Read()){
@@ -133,20 +133,31 @@ namespace Datas{
         return false;
     }
 
-        public object? querry(string mode){
+        public object? querry(string mode, string met="id", string ord="asc"){
             string comando;
+            //print($"{mode}, {met}, {ord}");
+            ord=ord.ToLower();
+            if(!(met=="id"||met=="pubYear"||met=="author"||met=="title")){
+                print("failed met\nGoing by id");
+                met="id";
+            }else if(!(ord=="asc"||ord=="desc")){
+                print("failed ord\nGoing ascending");
+                ord="asc";
+            }
             if(mode=="all"){
-                comando="select * from book";
+                comando=$"select * from book order by {met} {ord}";
             }else if(mode=="available"){
-                comando="select * from book where available=1";
+                comando=$"select * from book where available=1 order by {met} {ord}";
             }else if(mode=="unavailable"){
-                comando="select * from book where available=0";
+                comando=$"select * from book where available=0 order by {met} {ord}";
             }else{
                 print("Unknown mode");
                 return null!;
             }
             List<Dictionary<string,object>> results = new List<Dictionary<string,object>>();
-            using(var cmd = new MySqlCommand(comando,_db))
+            using(var cmd = new MySqlCommand(comando,_db)){
+                cmd.Parameters.AddWithValue("@met",met);
+                cmd.Parameters.AddWithValue("@ord",ord);
                 using(var reader = cmd.ExecuteReader()){
                     int count=reader.FieldCount;
                     if(!reader.HasRows){return null!;}
@@ -157,7 +168,7 @@ namespace Datas{
                         }
                         results.Add(row);
                     }
-                }
+                }}
             return results;
        }
     
@@ -180,13 +191,33 @@ namespace Datas{
                     }
                 return results;
             }
-        public object querry(string method,object content){
+        
+        public object querry(string method,object content, string met="id", string ord="asc"){
+        string command;
+        print($"{method}, {content}, {met}, {ord}, here");
         if(!checkTableCols(method)){
             print("Unknown method");
             return null!;
         }
-        using(var cmd = new MySqlCommand(@$"select * from book where {method}=@content",_db)){
-            cmd.Parameters.AddWithValue("@content",content);
+        ord=ord.ToLower();
+        if(!(met=="id"||met=="pubYear"||met=="author"||met=="title")){
+            print("failed met\nGoing by id");
+            met="id";
+        }else if(!(ord=="asc"||ord=="desc")){
+            print("failed ord\nGoing ascending");
+            ord="asc";
+        }
+        if(method=="id"||method=="pubYear"){
+            command=@$"select * from book where {method}=@content";
+        }else{
+            command=@$"select * from book where {method} like @content order by {met} {ord}";
+        }
+        using(var cmd = new MySqlCommand(command,_db)){
+            if(method=="id"||method=="pubYear"){
+                cmd.Parameters.AddWithValue("@content",content);
+            }else{
+                cmd.Parameters.AddWithValue("@content",$"%{content}%");
+            }
             using(var reader = cmd.ExecuteReader()){
                 int count=reader.FieldCount;
                 var results = new List<Dictionary<string,object>>();

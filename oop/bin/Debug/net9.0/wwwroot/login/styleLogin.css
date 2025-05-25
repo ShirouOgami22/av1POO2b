@@ -1,0 +1,63 @@
+
+        body{
+            position: relative;
+            background-color: lightgray;
+            font-family: monospace;
+            user-select: none;
+        }
+        img{
+            position: absolute;
+            height: 70%;
+            border-radius: 5px;
+            margin-left: 5%;
+            margin-top: 2%;
+        }
+        p{
+            margin-top: 0;
+            margin-bottom: 0;
+            margin-left: 2%;
+            color: red;
+        }
+        #main{
+            background-color: darkgray;
+            max-width: 60%;
+            height: 550px;
+            margin-left: 20%;
+            margin-top: 10%;
+            border-radius: 4px;
+            padding: 5px;
+            position: relative;
+        }
+        #creds{
+            position: absolute;
+            background-color: whitesmoke;
+            border-radius: 5px;
+            padding: 5px;
+            margin-top: 5%;
+            margin-left: 50%;
+            max-height: 60%;
+            width: 40%;
+        }
+        #creds input{
+            background-color: white;
+            border-radius: 2px;
+            height: 15%;
+            width: 80%;
+            font-size: 25px;
+            margin-left: 2%;
+        }
+        #creds h2{
+            margin-left: 2%;
+        }
+        #creds button{
+            background-color: darkcyan;
+            border-radius: 3px;
+            margin-left: 2%;
+            margin-top: 3%;
+            cursor: pointer;
+            height: 12%;
+            min-width: fit-content;
+            width: 15%;
+            font-size:14px ;
+        }
+    

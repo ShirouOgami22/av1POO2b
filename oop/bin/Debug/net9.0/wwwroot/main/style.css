@@ -94,11 +94,6 @@ span{
     cursor: pointer;
     width: min-content;
 }
-#EM{
-    position: absolute;
-    margin-top: -5%;
-    margin-left: 50%;
-}
 label, #av{
     cursor: pointer;
 }
