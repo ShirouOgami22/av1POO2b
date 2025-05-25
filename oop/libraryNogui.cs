@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace libN{
     public static class NoguiLibrary{
        public static void libraryNogui(){
-        //Console.Clear();
+        Console.Clear();
         print("Type 'help' or 'h'");
         while(running){
             current = "library";
@@ -19,10 +19,9 @@ namespace libN{
                     case "" or null:
                         print("Please input something");
                     break;
-                    //
                     case "h" or "help":
                     if(a.Length==1){
-                        //could improve this tho...
+                        // improve this
                         print($"{man("clear","word")}\n{man("clear","desc")}\n{man("clear","use")}\n");
                         print($"{man("help","word")}\n{man("help","desc")}\n{man("help","use")}\n");
                         print($"{man("quit","word")}\n{man("quit","desc")}\n{man("quit","use")}\n");
@@ -37,19 +36,15 @@ namespace libN{
                     }else{
                         print("Invalid amount of arguments");
                     }
-                    //improve...
                     break;
-                    //
                     case "q" or "quit":
                         db.disconnect();
                         print("Byye!");
                         Environment.Exit(0);
                     break;
-                    //
                     case "cls" or "clear":
                         Console.Clear();
                     break;
-                    //
                     case "search":
                     object e;
                     if(a.Length<2){
@@ -78,12 +73,28 @@ namespace libN{
                     break;
                     //
                     case "list":
+                    Console.Clear();
                     if(a.Length==2){
                         if(isNull(a[1])){
                                 print("Invalid argument to list");
                                 break;
                         }else if(a[1]=="all"||a[1]=="available"||a[1]=="unavailable"){
                             list(a[1]);
+                        }else{
+                            print("invalid filter");
+                            break;
+                        }
+                    }else if(a.Length==4){
+                        if(isNull(a[1])){
+                            print("Invalid argument to list");
+                            break;
+                        }else if(a[1]=="all"||a[1]=="available"||a[1]=="unavailable"){
+                            if(isNull(a[2])||isNull(a[3])){
+                                print("Invalid arguments");
+                                break;
+                            }else{
+                                list(a[1],a[2],a[3]);
+                            }
                         }else{
                             print("invalid filter");
                             break;

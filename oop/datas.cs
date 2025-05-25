@@ -133,6 +133,26 @@ namespace Datas{
         return false;
     }
 
+        public object? querryUsers(string mode){
+            if(mode!="all"){
+                return null;
+            }
+                List<Dictionary<string,object>> results = new List<Dictionary<string,object>>();
+                using(var cmd = new MySqlCommand("select * from `user`",_db))
+                    using(var reader = cmd.ExecuteReader()){
+                        int count=reader.FieldCount;
+                        if(!reader.HasRows){return null!;}
+                        while(reader.Read()){
+                            var row = new Dictionary<string,object>();
+                            for (int e = 0; e < count; e++){
+                                row[reader.GetName(e)] = reader.GetValue(e);
+                            }
+                            results.Add(row);
+                        }
+                    }
+                return results;
+            }
+        
         public object? querry(string mode, string met="id", string ord="asc"){
             string comando;
             //print($"{mode}, {met}, {ord}");
@@ -146,8 +166,6 @@ namespace Datas{
             }
             if(mode=="all"){
                 comando=$"select * from book order by {met} {ord}";
-            }else if(mode=="available"){
-                comando=$"select * from book where available=1 order by {met} {ord}";
             }else if(mode=="unavailable"){
                 comando=$"select * from book where available=0 order by {met} {ord}";
             }else{
@@ -172,39 +190,16 @@ namespace Datas{
             return results;
        }
     
-        public object? querryUsers(string mode){
-            if(mode!="all"){
-                return null;
-            }
-                List<Dictionary<string,object>> results = new List<Dictionary<string,object>>();
-                using(var cmd = new MySqlCommand("select * from `user`",_db))
-                    using(var reader = cmd.ExecuteReader()){
-                        int count=reader.FieldCount;
-                        if(!reader.HasRows){return null!;}
-                        while(reader.Read()){
-                            var row = new Dictionary<string,object>();
-                            for (int e = 0; e < count; e++){
-                                row[reader.GetName(e)] = reader.GetValue(e);
-                            }
-                            results.Add(row);
-                        }
-                    }
-                return results;
-            }
-        
         public object querry(string method,object content, string met="id", string ord="asc"){
         string command;
-        print($"{method}, {content}, {met}, {ord}, here");
         if(!checkTableCols(method)){
             print("Unknown method");
             return null!;
         }
         ord=ord.ToLower();
         if(!(met=="id"||met=="pubYear"||met=="author"||met=="title")){
-            print("failed met\nGoing by id");
             met="id";
         }else if(!(ord=="asc"||ord=="desc")){
-            print("failed ord\nGoing ascending");
             ord="asc";
         }
         if(method=="id"||method=="pubYear"){
