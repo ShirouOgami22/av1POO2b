@@ -1,0 +1,10 @@
+C:\Users\thony\Downloads\av1POO2b\oop\bin\Release\net9.0\win-x64\publish\appsettings.Development.json
+C:\Users\thony\Downloads\av1POO2b\oop\bin\Release\net9.0\win-x64\publish\appsettings.json
+C:\Users\thony\Downloads\av1POO2b\oop\bin\Release\net9.0\win-x64\publish\oop.pdb
+C:\Users\thony\Downloads\av1POO2b\oop\bin\Release\net9.0\win-x64\publish\aspnetcorev2_inprocess.dll
+C:\Users\thony\Downloads\av1POO2b\oop\bin\Release\net9.0\win-x64\publish\comerr64.dll
+C:\Users\thony\Downloads\av1POO2b\oop\bin\Release\net9.0\win-x64\publish\gssapi64.dll
+C:\Users\thony\Downloads\av1POO2b\oop\bin\Release\net9.0\win-x64\publish\k5sprt64.dll
+C:\Users\thony\Downloads\av1POO2b\oop\bin\Release\net9.0\win-x64\publish\krb5_64.dll
+C:\Users\thony\Downloads\av1POO2b\oop\bin\Release\net9.0\win-x64\publish\krbcc64.dll
+C:\Users\thony\Downloads\av1POO2b\oop\bin\Release\net9.0\win-x64\publish\oop.exe
