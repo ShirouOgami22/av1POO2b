@@ -124,6 +124,7 @@ namespace Datas{
 
         public object? querryUsers(string mode){
             if(mode!="all"){
+                print(mode);
                 return null;
             }
             List<Dictionary<string,object>> results = new List<Dictionary<string,object>>();
@@ -141,7 +142,6 @@ namespace Datas{
                 }}
                 if(results.Count!=0){
                     return results;
-                    
                 }else{
                     return null;
                 }

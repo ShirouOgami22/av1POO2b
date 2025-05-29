@@ -124,12 +124,15 @@ async function manageUsers(){
     document.getElementById("manageUsr").setAttribute("onclick","clearSearch()");
     document.getElementById("manageUsr").innerText="Show books";
     let bookshelf=document.getElementById("bookShelf");
-    await fetch(`library/getUsers/all`)
+    await fetch(`/library/getUsers/all`)
     .then(response=>response.json())
     .then(data=>{
         if(data==null||data==0||data.length==0){
             bookshelf.innerHTML=`
             <center><h2 id="nO">No users<br>Maybe an error?</h2></center>`;
+        }else if(typeof(data)==String){
+            console.log(data);
+            return;
         }else{
             bookshelf.innerHTML="";
             data.forEach(user => {

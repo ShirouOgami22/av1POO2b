@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\oop.csproj": {}
+    "C:\\Users\\anthony_guerra\\Documents\\av1POO2b\\oop\\oop.csproj": {}
   },
   "projects": {
-    "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\oop.csproj": {
+    "C:\\Users\\anthony_guerra\\Documents\\av1POO2b\\oop\\oop.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\oop.csproj",
+        "projectUniqueName": "C:\\Users\\anthony_guerra\\Documents\\av1POO2b\\oop\\oop.csproj",
         "projectName": "oop",
-        "projectPath": "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\oop.csproj",
-        "packagesPath": "C:\\Users\\thony\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\thony\\Downloads\\av1POO2b\\oop\\obj\\",
+        "projectPath": "C:\\Users\\anthony_guerra\\Documents\\av1POO2b\\oop\\oop.csproj",
+        "packagesPath": "C:\\Users\\anthony_guerra\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\anthony_guerra\\Documents\\av1POO2b\\oop\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\thony\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\anthony_guerra\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -48,12 +48,6 @@
               "target": "Package",
               "version": "[9.0.4, )"
             },
-            "Microsoft.NET.ILLink.Tasks": {
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[9.0.4, )",
-              "autoReferenced": true
-            },
             "MySql.Data": {
               "target": "Package",
               "version": "[9.3.0, )"
@@ -74,20 +68,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
-              "version": "[9.0.4, 9.0.4]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Runtime.win-x64",
-              "version": "[9.0.4, 9.0.4]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
-              "version": "[9.0.4, 9.0.4]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -97,11 +77,6 @@
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
-        }
-      },
-      "runtimes": {
-        "win-x64": {
-          "#import": []
         }
       }
     }
