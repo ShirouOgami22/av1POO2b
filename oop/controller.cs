@@ -18,6 +18,15 @@ namespace Controller{
             return BadRequest("You dont have the right permission");
         }
 
+        [HttpGet("rmUser")]
+        public IActionResult delete([FromQuery] string query){
+            if(permissions=="manager"){
+                db.removeUser(Convert.ToInt32(query));
+                return Ok($"Deleted user ${query}");
+            }
+            return BadRequest("You dont have the right permission");
+        }
+
         [HttpGet("UserCreds")]
         public IActionResult auth(){
             if(permissions=="manager"){
@@ -60,7 +69,11 @@ namespace Controller{
                     var author = body.GetProperty("author").GetString();
                     var pubyear = body.GetProperty("pubYear").GetInt32();
                     var category = body.GetProperty("category").GetString();
-                    db.create(what,title!,author!,pubyear!,category!);
+                    db.createBook(title!,author!,pubyear!,category!);
+                }else if(what=="user"){
+                    var name = body.GetProperty("name").GetString();
+                    var role = body.GetProperty("role").GetString();
+                    db.createUser(what,name!,role!);
                 }
                 return Ok();
             }else{

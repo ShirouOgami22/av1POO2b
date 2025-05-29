@@ -262,6 +262,16 @@ label, #av{
     max-width: 50%;
     background-color: aliceblue;
 }
+#square{
+    background-color: grey;
+    cursor: pointer;
+}
+#addNewUser{
+    font-size: 60px;
+    margin-top: 60%;
+    margin-left: 40%;
+}
+
 /*!--main--!*/
 footer{
     background-color: white;

@@ -42,13 +42,13 @@ namespace Datas{
     }
 
         public void disconnect(){
-        try{
-            if(_db!.State!=System.Data.ConnectionState.Closed){
-                _db.Close();
-                print("Disconnected the database!");
-            }else{print("No database connected");}
-        }catch(Exception err){print($"Error disconnecting database:\n-'{err}'-");}
-    }
+            try{
+                if(_db!.State!=System.Data.ConnectionState.Closed){
+                    _db.Close();
+                    print("Disconnected the database!");
+                }else{print("No database connected");}
+            }catch(Exception err){print($"Error disconnecting database:\n-'{err}'-");}
+        }
 
         public bool checkTableCols(string columnName,string table=@"book"){
             using(var command = new MySqlCommand($"select column_name from information_schema.columns where table_name = @table and column_name = @columnName", _db)){
@@ -67,60 +67,60 @@ namespace Datas{
         }
 
         public bool logIn(string a){
-        if(isNull(a)){
-            print("invalid user?");
+            if(isNull(a)){
+                print("invalid user?");
+                return false;
+            }else{
+                for(int i=0;i<a.Length; i++){
+                    if(a[i].Equals('-')){
+                        print("What you trynna do?");
+                        return false;
+                    }
+                }
+            }
+            worker="";
+            permissions="";
+            using(var cmd = new MySqlCommand($"select * from `users` where name = @a;",_db)){
+            cmd.Parameters.AddWithValue("@a", a);
+            using(var reader = cmd.ExecuteReader()){
+                int found=reader.FieldCount;
+                while (reader.Read()){
+                    for(int i=0;i<found; i++){
+                        if(reader.GetName(i)=="name"){
+                            worker=reader.GetValue(i).ToString()!;
+                        }if(reader.GetName(i)=="role"){
+                            permissions=reader.GetValue(i).ToString()!;
+                        }
+                        if((!isNull(worker))&&(!isNull(permissions))){
+                           return true;
+                        }
+                    }
+                }
+            }}
             return false;
-        }else{
-            for(int i=0;i<a.Length; i++){
-                if(a[i].Equals('-')){
-                    print("What you trynna do?");
-                    return false;
-                }
-            }
         }
-        worker="";
-        permissions="";
-        using(var cmd = new MySqlCommand($"select * from `users` where name = @a;",_db)){
-        cmd.Parameters.AddWithValue("@a", a);
-        using(var reader = cmd.ExecuteReader()){
-            int found=reader.FieldCount;
-            while (reader.Read()){
-                for(int i=0;i<found; i++){
-                    if(reader.GetName(i)=="name"){
-                        worker=reader.GetValue(i).ToString()!;
-                    }if(reader.GetName(i)=="role"){
-                        permissions=reader.GetValue(i).ToString()!;
-                    }
-                    if((!isNull(worker))&&(!isNull(permissions))){
-                       return true;
-                    }
-                }
-            }
-        }}
-        return false;
-    }
 
         public bool paswd(string b,string a){
-        if(a!=worker){return false;}
-        using(var cmd = new MySqlCommand($"select pasword from `users` where name = @a;",_db)){
-        cmd.Parameters.AddWithValue("@a",a);
-        using(var reader = cmd.ExecuteReader()){
-            while(reader.Read()){
-                string pass=reader.GetValue(0).ToString()!;
-                if(isNull(b)){
-                    print("Type your password");
-                    return false;
+            if(a!=worker){return false;}
+            using(var cmd = new MySqlCommand($"select pasword from `users` where name = @a;",_db)){
+            cmd.Parameters.AddWithValue("@a",a);
+            using(var reader = cmd.ExecuteReader()){
+                while(reader.Read()){
+                    string pass=reader.GetValue(0).ToString()!;
+                    if(isNull(b)){
+                        print("Type your password");
+                        return false;
+                    }
+                    if(b==pass){
+                        return true;
+                    }else{
+                        print("Incorrect password");
+                        return false;
+                    }
                 }
-                if(b==pass){
-                    return true;
-                }else{
-                    print("Incorrect password");
-                    return false;
-                }
-            }
-        }}
-        return false;
-    }
+            }}
+            return false;
+        }
 
         public object? querryUsers(string mode){
             if(mode!="all"){
@@ -225,24 +225,33 @@ namespace Datas{
         }   
     }
 
-        public void create(string what,string title,string author,int? pubyear,string category){
-            if(!checkTableCols("id",what)){
-                print($"table {what} doesnt exist");
+        public void createUser(string name, string role){
+            if(name==null||role==null){
+                print("neither fields can be null")
                 return;
             }
+            if(isNull(name)||isNull(role)){
+                print($"neither fields can be null...");return;
+            }try{
+                using(var cmd=new MySqlCommand($"insert into users(name,role) values (@N,@R); ",_db)){
+                    cmd.Parameters.AddWithValue("@N",name);
+                    cmd.Parameters.AddWithValue("@R",role);
+                    cmd.ExecuteNonQuery();
+            }}catch(Exception err){print($"some error happened: {err}");return;}
+        }
+        
+        public void createBook(string title,string author,int? pubyear,string category){
             if(
                 isNull(title)||
                 isNull(author)||
                 pubyear==null||
                 isNull(category)
             ){print($"some field is null");return;}
-            try{using(var cmd=new MySqlCommand($"insert into {what}(author,title,pubYear,category) values (@A,@T,@P,@C); ",_db)){
+            try{using(var cmd=new MySqlCommand($"insert into book(author,title,pubYear,category) values (@A,@T,@P,@C); ",_db)){
                 cmd.Parameters.AddWithValue("T",title);
                 cmd.Parameters.AddWithValue("A",author);
                 cmd.Parameters.AddWithValue("P",pubyear);
                 cmd.Parameters.AddWithValue("C",category);
-                //cmd.Parameters.AddWithValue("what",what);
-                //uhh, tho its unsafe, i guess the easiest way is to directly insert 'what' into the command
                 cmd.ExecuteNonQuery();
             }}catch(Exception err){print($"some error happened: {err}");return;}
         }
@@ -258,12 +267,19 @@ namespace Datas{
             }}catch{return;}
         }
 
+        public void removeUser(int id){
+            using(var cmd = new MySqlCommand("delete from `users` where id=@id",_db)){
+                cmd.Parameters.AddWithValue("id",id);
+                cmd.ExecuteNonQuery();
+            }
+        }
+        
         public void remove(int id){
             using(var cmd = new MySqlCommand("delete from book where id=@id",_db)){
                 cmd.Parameters.AddWithValue("id",id);
                 cmd.ExecuteNonQuery();
             }
-    }
+        }
 
     }
     public static class Idk{

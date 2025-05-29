@@ -61,7 +61,15 @@ async function Select(a){
         return;
     }
 }
-
+function newUser(){
+    let square=document.getElementById("square");
+    square.removeAttribute("onclick");
+    square.innerHTML=`
+    <input type="text" placeholder="Name" id="newName">
+    <input type="text" placeholder="Role" id="newRole">
+    <button onclick="addNewUser()">Create</button>
+    `
+}
 async function clearSearch(){
     //i can definetly improve this...
     //right?
@@ -73,8 +81,7 @@ async function clearSearch(){
     try{
     document.getElementById("manageUsr").setAttribute("onclick","manageUsers()");
     document.getElementById("manageUsr").innerText="Manage users";
-    document.getElementById("create").innerText="Create book";
-    document.getElementById("create").setAttribute("onclick","createbook()");
+    document.getElementById("create").removeAttribute("hidden");
     }catch(err){console.log(err);}
     await Select("close");
     allBooks();

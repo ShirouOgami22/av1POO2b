@@ -115,26 +115,46 @@ async function saveBook(id,method){
     }
 }
 
+async function addNewUser(){
+    let newUser;
+    let name=document.getElementById("newName").value;
+    let role=document.getElementById("newRole").value;
+    if(name==""||role==""){
+        alert("fields acannot be empty");
+        return;
+    }
+    newUser={
+        'name':name,
+        'role':role,
+    }; 
+    await fetch(`/library/Create/user`,{
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(newUser)
+    })
+    //could improve
+}
+
 async function manageUsers(){
     Select("close")
     document.getElementById("searchDiv").setAttribute("hidden","");
     document.getElementById("menuDiv").setAttribute("hidden","");
-    document.getElementById("create").innerText="Create user";
-    document.getElementById("create").setAttribute("onclick","newUser()");
+    document.getElementById("create").setAttribute("hidden","");
     document.getElementById("manageUsr").setAttribute("onclick","clearSearch()");
     document.getElementById("manageUsr").innerText="Show books";
     let bookshelf=document.getElementById("bookShelf");
+    bookshelf.innerHTML="";
+    bookshelf.innerHTML+=`
+        <div id="square" onclick="newUser()" class="userShow">
+            <div id="addNewUser">+</div>
+        </div>`;
     await fetch(`/library/getUsers/all`)
     .then(response=>response.json())
     .then(data=>{
-        if(data==null||data==0||data.length==0){
+        if(data==null||data.length==0){
             bookshelf.innerHTML=`
             <center><h2 id="nO">No users<br>Maybe an error?</h2></center>`;
-        }else if(typeof(data)==String){
-            console.log(data);
-            return;
         }else{
-            bookshelf.innerHTML="";
             data.forEach(user => {
                 let idk=user.role
                 let eh="";
@@ -156,6 +176,13 @@ async function manageUsers(){
            });
         }        
     })
+}
+
+async function removeUser(id){
+    let message=`do you really wish to delete the user by id ${id}?\nthis action is irreversible!`
+    if(confirm(message)){
+        fetch(`/library/rmUser?query=${encodeURIComponent(id)}`);
+    }
 }
 
 async function selectBook(aspect,info,method="",order=""){
