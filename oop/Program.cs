@@ -54,7 +54,7 @@ if(args.Length<=0){
     }else if(args[0].ToLower()=="library" && args[1].ToLower()=="gui"){
         app.UseDefaultFiles();
         app.UseStaticFiles();
-        app.MapFallbackToFile("/clogin/login.html");
+        app.MapFallbackToFile("/login/login.html");
         app.MapControllers();
         app.Run();
     }else if(args[0].ToLower()=="database" && args[1].ToLower()=="nogui"){
