@@ -37,7 +37,7 @@ namespace Controller{
             return Ok(db.querry("all",method,order));
         }
         
-        [HttpGet("getUsers/all")]
+        [HttpGet("GetUsers/all")]
         public IActionResult getAusers(){
             if(permissions!="manager"){
                 return BadRequest("You dont have the permission");

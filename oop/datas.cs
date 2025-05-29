@@ -39,17 +39,6 @@ namespace Datas{
                 }
             }    
         }
-        //debug:
-            //list all books:
-            //for(int i=0;i<books.Count;i++){
-            //    print($"{books[i].Item1}, {books[i].Item2}, {books[i].Item3}");
-            //}
-            
-            //list all tables:
-            //for(int i=0;i<availableTables.Count;i++){
-            //    print($"{availableTables[i]}");
-            //}
-                
     }
 
         public void disconnect(){
@@ -91,8 +80,8 @@ namespace Datas{
         }
         worker="";
         permissions="";
-        using(var cmd = new MySqlCommand($"select * from user where name like @a;",_db)){
-        cmd.Parameters.AddWithValue("@a", $"%{a}%");
+        using(var cmd = new MySqlCommand($"select * from `users` where name = @a;",_db)){
+        cmd.Parameters.AddWithValue("@a", a);
         using(var reader = cmd.ExecuteReader()){
             int found=reader.FieldCount;
             while (reader.Read()){
@@ -113,7 +102,7 @@ namespace Datas{
 
         public bool paswd(string b,string a){
         if(a!=worker){return false;}
-        using(var cmd = new MySqlCommand($"select pasword from user where name = @a;",_db)){
+        using(var cmd = new MySqlCommand($"select pasword from `users` where name = @a;",_db)){
         cmd.Parameters.AddWithValue("@a",a);
         using(var reader = cmd.ExecuteReader()){
             while(reader.Read()){
@@ -137,21 +126,26 @@ namespace Datas{
             if(mode!="all"){
                 return null;
             }
-                List<Dictionary<string,object>> results = new List<Dictionary<string,object>>();
-                using(var cmd = new MySqlCommand("select * from `user`",_db))
-                    using(var reader = cmd.ExecuteReader()){
-                        int count=reader.FieldCount;
-                        if(!reader.HasRows){return null!;}
-                        while(reader.Read()){
-                            var row = new Dictionary<string,object>();
-                            for (int e = 0; e < count; e++){
-                                row[reader.GetName(e)] = reader.GetValue(e);
-                            }
-                            results.Add(row);
+            List<Dictionary<string,object>> results = new List<Dictionary<string,object>>();
+            using(var cmd = new MySqlCommand("select * from `users`",_db)){
+                using(var reader = cmd.ExecuteReader()){
+                    int count=reader.FieldCount;
+                    if(!reader.HasRows){return null!;}
+                    while(reader.Read()){
+                        var row = new Dictionary<string,object>();
+                        for (int e = 0; e < count; e++){
+                            row[reader.GetName(e)] = reader.GetValue(e);
                         }
+                        results.Add(row);
                     }
-                return results;
-            }
+                }}
+                if(results.Count!=0){
+                    return results;
+                    
+                }else{
+                    return null;
+                }
+        }
         
         public object? querry(string mode, string met="id", string ord="asc"){
             string comando;
