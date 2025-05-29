@@ -19,7 +19,7 @@ namespace Controller{
         }
 
         [HttpGet("rmUser")]
-        public IActionResult delete([FromQuery] string query){
+        public IActionResult deleteUser([FromQuery] string query){
             if(permissions=="manager"){
                 db.removeUser(Convert.ToInt32(query));
                 return Ok($"Deleted user ${query}");
@@ -73,7 +73,7 @@ namespace Controller{
                 }else if(what=="user"){
                     var name = body.GetProperty("name").GetString();
                     var role = body.GetProperty("role").GetString();
-                    db.createUser(what,name!,role!);
+                    db.createUser(name!,role!);
                 }
                 return Ok();
             }else{

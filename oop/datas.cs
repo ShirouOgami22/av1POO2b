@@ -227,7 +227,7 @@ namespace Datas{
 
         public void createUser(string name, string role){
             if(name==null||role==null){
-                print("neither fields can be null")
+                print("neither fields can be null");
                 return;
             }
             if(isNull(name)||isNull(role)){
